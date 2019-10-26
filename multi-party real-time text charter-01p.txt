@@ -1,0 +1,88 @@
+multi-party-real-time-text-01p
+21 October 2019
+
+IETF charter for Multi-party handling of Real-time text.
+
+Real-time text is text media used in conversational services, transmitted
+and presented at the rate it is created. That is intended to creates a
+sense of direct contact between the sender and receiver just as real-time 
+voice and video communication does.
+
+Real-time text is used by its own in calls as well as in combination with 
+audio and/or video. 
+
+A number of higher level standards requires availability of multi-party
+real-time text. Multi-party real-time text can be arranged by standardized
+mechanisms in a number of ways. However no current standard is sufficient
+explicit about any recommended method for provision of multi-party
+real-time text to assure proper presentation in end-user devices. 
+
+The work described by this charter is intended to create IETF documents 
+specifying recommended methods for provision of multi-party real-time text.
+The goal is to specify multi-party real-time text for cases when
+ITU-T T.140 presentation protocol for real-time text is used, The main 
+transport protocol for the methods to be specified is RTP, with payload
+as specified in RFC 4103.
+
+Multi-party real-time text requires specific actions for presentation 
+of the text from the different sources in a way that places the text 
+from the different sources collected in a clearly readable way while 
+still also providing an impression of the order in time that text 
+from the different sources was created. This requirement makes plain
+mixing of the text from different sources in a similar way as usually
+done for audio unsuitable. Instead, for good presentation, the sender 
+of the text from different sources need to indicate the source of text
+and interleave transmission of text from the different sources to let 
+the receiver have control over the presentation.
+
+Indication of source of each T.140 text item, and interleaved
+transmission of text from different sources can be done in a number 
+of different ways. Four ways have been identified and discussed: 
+Use of the RTP translator specified in RFC 3550, use of RTP bundle
+specified in RFC 8108, using separate RTP sessions (or data channels)
+for each source and finally; including a source in the T.140 text stream
+as a new T.140 control code. The most realistic ways are studied
+during the work and their benefits and weaknesses are described. 
+One method is selected to be recommended and specified in more 
+detail. Ways to negotiate the recommended mixing method will be 
+specified.  
+
+Many current implementations of Real-time text have no multi-party
+capability and no conference-awareness. In order to enable participation
+in multi-party sessions also for such implementations, a form of limited
+multi-party presentation arranged by a specific mixer function for this 
+case will be specified. The presentation for this case cannot be 
+expected to have good usability, but will rather be a low 
+functionality fallback method. 
+
+Input material to the work, is an expired IETF draft: 
+"Text media handling in RTP based real-time conferences"
+https://tools.ietf.org/html/draft-hellstrom-text-conference-04
+and a specification available in the real-time text task force:
+"Multi-party real-time text for presentation in conference-unaware user agents"
+http://www.realtimetext.org/sites/default/files/Files_and_Documents/Specifications/multiparty-real-time-text-mixer-2011-04-30.pdf
+Aspects to consider for presentation of real-time text is found in an expired
+IETF draft "Presentation of Text Conversation in real-time and en-bloc form".
+https://datatracker.ietf.org/doc/draft-hellstrom-textpreview/
+
+The work will focus on use in the SIP RFC 3261 call control environment.
+Opportunities to use the methods or variants of them in WebRTC
+will be mentioned.
+
+The goal is that the fully specified method will be applicable in the 
+next generation emergency services as specified in RFC 6443, and in 3GPP IMS.
+The methods used for multi-party call control and specified in RFC 4579
+and RFC 4575 will be among the ones studied.
+
+The expected output is one Best Current Practices document specifying 
+recommended use of standards for the purpose, and, if needed, a short 
+Standard Track documents registering items for capability declarations
+and negotiating the recommended method.
+
+The main document may also specify need for extensions on the ITU-T T.140 
+protocol.
+
+  
+    
+
+ 
