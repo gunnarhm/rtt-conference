@@ -63,20 +63,18 @@
 
       <address>
         <postal>
-          <street>Box 92054</street>
+          <street>Esplanaden 30</street>
 
           <!-- Reorder these if your country does things differently -->
 
-          <city>Stockholm</city>
+          <city>Vendelso</city>
 
-          <code>SE-120 06</code>
+          <code>SE-136 70</code>
 
           <country>SE</country>
         </postal>
 
-        <phone>+46 858900056</phone>
-
-        <facsimile>+46 858900051</facsimile>
+        <phone>+46 708 204 288</phone>
 
         <email>gunnar.hellstrom@omnitor.se</email>
 
@@ -99,10 +97,10 @@
 
           <code></code>
 
-          <country>NL</country>
+          <country>US</country>
         </postal>
 
-        <facsimile>+31 412614000</facsimile>
+        <facsimile></facsimile>
 
         <email>arnoud@realtimetext.org</email>
 
@@ -112,7 +110,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2011" />
+    <date month="October" year="2019" />
 
     <!-- If the month and year are both specified and are the current ones, xml2rfc will fill 
          in the current day for you. If only the current year is specified, xml2rfc will fill 
@@ -141,27 +139,31 @@
 
     <abstract>
       <t>This memo specifies methods for text media handling in multi-party
-      calls, where the text is carried by the RTP protocol. Real-time text is
-      carried in a time-sampled mode according to RFC 4103. Centralized
+      calls. The main solution is to carry Real-Time text (RTT) by the RTP protocol
+      in a time-sampled mode according to RFC 4103. The main solution for centralized
       multi-party handling of real-time text is achieved through a media
       control unit coordinating multiple RTP text streams into one single
-      stream RTP session, identifying each stream with its own CSRC.
+      RTP session.
       Identification for the streams are provided through the RTCP messages.
       This mechanism enables the receiving application to present the received
       real-time text medium in different ways according to user preferences.
       Some presentation related features are also described explaining
       suitable variations of transmission and presentation of text. Call
       control features are described for the SIP environment, while the
-      transport mechanisms should be suitable for any IP based call control
-      environment using RTP transport. Two alternative methods using a single
-      RTP stream and source identification inline in the text stream are also
-      described. </t>
+      transport mechanisms would be suitable for any IP based call control
+      environment using RTP transport. A number of alternative methods for 
+      providing the multi-party negotiation, transmission and presentation are 
+      discussed and a recommendation for the main one provided. Two alternative
+      methods using a single RTP stream and source identification inline in the 
+      text stream are also described, one of them being provided as a lower 
+      functionality fallback method for endpoints with no multi-party awareness 
+      for RTT. Brief information is also provided for multi-party RTT in the WebRTC environment.  </t>
     </abstract>
   </front>
 
   <middle>
     <section title="Introduction">
-      <t>Real-time text is a medium in real-time conversational sessions. Text
+      <t>Real-time text (RTT) is a medium in real-time conversational sessions. Text
       entered by participants in a session is transmitted in a time-sampled
       fashion, so that no specific user action is needed to cause
       transmission. This gives a direct flow of text that is suitable in a
@@ -173,23 +175,18 @@
       in such multi-party sessions.</t>
 
       <t>The description is mainly focused on the transport level, but also
-      describes a few presentation level features.</t>
+      describes a few session and presentation level features.</t>
 
       <t>Transport of real-time text is specified in <xref
       target="RFC4103">RFC 4103</xref> RTP Payload for text conversation. It
       makes use of <xref target="RFC3550">RFC 3550</xref> Real Time Protocol,
       for transport, and is usually used in the SIP Session Initiation
-      Protocol <xref target="RFC3261">RFC 3261</xref> environment, even if it
-      is also used in other call control environments. Call control aspects in
-      this specification are explained with examples from SIP. The
-      specifications about how to handle multi-party text transport,
-      identification and presentation are valid also for other call control
-      environments where RTP and RTCP are used.</t>
+      Protocol <xref target="RFC3261">RFC 3261</xref> environment.</t>
 
-      <t>A very brief overview of functions for both real-time and messaging
+      <t>A very brief overview of functions for real-time
       text handling in multi-party sessions is described in <xref
-      target="RFC4579">RFC 4597</xref> Conferencing Scenarios. This
-      specification builds on that description and indicates what existing
+      target="RFC4579">RFC 4597</xref> Conferencing Scenarios, sections 4.8 and 4.10. This
+      specification builds on that description and indicates which
       protocol mechanisms should be used to implement multi-party handling of
       text in real-time sessions.</t>
 
@@ -202,7 +199,9 @@
     </section>
 
     <section title="Centralized conference model">
-      <t>In the centralized conference model, one function co-ordinates the
+      <t>In the centralized conference model for SIP, introduced in <xref
+      target="RFC4353">RFC 4353</xref> A Framework for Conferencing with the Session
+        Initiation Protocol (SIP), one function co-ordinates the
       sessions with participants in the multi-party session. This function
       also controls media mixer functions for the media appearing in the
       session. The central function is common for control of all media, while
@@ -221,7 +220,10 @@
       going to have real-time text exchange with the others.</t>
 
       <section title="Coordination of text RTP streams">
-        <t>The preferred way of coordinating text RTP streams is that within
+        <t>Coordinating and sending text RTP streams in the multi-party session can be done in a number of ways. 
+		The most suitable methods are specified here with pros and cons.
+		
+		Within
         each RTP session, text from all participants are transmitted from the
         media mixer in the same RTP stream, thus all using the same
         destination address/port combination, and the same RTP SSRC as
