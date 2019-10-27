@@ -332,7 +332,37 @@ in the display. Mechanisms for looking back in the contents from the current ses
 										 
 			
       </section>
-	    		
+	 <section title="Mixing for conference-unaware user agents">
+      <t>Multi-party real-time text contents can be transmitted to
+      conference-unaware user agents if source labeling and formatting of the
+      text is performed by a mixer. This method has the limitations that the
+      layout of the presentation and the format of source identification is purely controlled by the mixer, and
+      that only one source at a time is allowed to present in real-time. Other
+      sources need to be stored temporarily waiting for an appropriate moment
+      to switch the source of transmitted text. The mixer controls the switching
+of sources and inserts a source identifier in text format at the beginning of text after switch of source. 
+The logic of trhe mixer to detect when a switch is appropriate should detect 
+a number of places in text where a switch can be allowed, including new line, 
+end of sentence, end of phrase, a period of inactivity, and a word separator after a long time
+of active transmission.</t>
+
+      <t>This method MAY be used when no support for multi-party awareness is detected in the receiving endpoint.</t>
+   <t>Pros: Can be transmitted to conference-unaware endpoints.</t>
+   <t>Can be used with other transports than RTP</t>
+<t>Cons: Does not allow full real-time presentation of more than one source at a time. Text from other sources will 
+be delayed, even if automatic detection of suitable moments for switching source for presentation is made by the mixer.</t>
+<t>The only realistic presentation format is a style with the text from the different sources presented with a text label 
+indicating source, and the text collected in a chat style presentation but with more frequent turn-taking.</t>
+<t>Endpoints often have their own system for adding labels to the RTT presentation. In that case there will be two
+levels of labels in the presentation, one for the mixer and one for the sources.</t>
+<t>When loss of more packets than can be recovered by the redundancy appears, it is not possible to detect which source 
+was struck by the loss. It is also possible that a source switch occurred during the loss, and therefore a false indication
+   of the source of text can be provided to the user after such loss.</t>
+ 
+ 
+								   
+    </section>    	
+										 
 			
       </section>
 
@@ -346,7 +376,7 @@ in the display. Mechanisms for looking back in the contents from the current ses
 
         <t>The procedures for the mixer-based model shall only be applied if a
         capability exchange for mixer-based real-time text transmission has
-        been completed. Capability for the mixer-based model is indicated by
+        been completed. Capability for the mixer-based model is indicated in aby
         both the focus and the user agent by the media tag
         rtt-mixer=rtp-mix</t>
       </section>
