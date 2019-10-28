@@ -256,7 +256,7 @@ in the display. Mechanisms for looking back in the contents from the current ses
         <t>Coordinating and sending text RTP streams in the multi-party session can be done in a number of ways. 
 		The most suitable methods are specified here with pros and cons.</t>
 		
-		<section title="RTP Mixer sending one stream of RTT, with participants indicated in CSRC>
+		<section title="RTP Mixer sending one mixed stream of RTT, with participants indicated in CSRC>
 	<t>	
 	An RTP media mixer combines text from all participants except from the receiving endpoint into one
  RTP stream , thus all using the same
@@ -326,8 +326,25 @@ section 3.5.1 Relay-transport translator or 3.5.2 Media translator.</t>
         3550</xref> about the Mixer function. The sources of the text
         in each RTP packet are identified by a new defined T.140 control code "c" 
 followed by a unique identification of the source in UTF-8 string format.</t>
-<t>The receiver can use the string for presenting the source of text. This method is described in RFC 7667, 
-section 3.6.2 Media mixing mixer.</t> 							      
+<t>The receiver can use the string for presenting the source of text. This method is on the RTP level described in RFC 7667, 
+section 3.6.2 Media mixing mixer.</t> 
+<t>The inline coding of
+      the source of text is applied in the data stream itself, and an
+      RTP mixer function normally without CSRC identification used for
+      coordinating the sources of text into one RTP stream.</t>
+
+
+      <t>Information uniquely identifying each user in the multi-party session
+      is placed as the parameter value &ldquo;c&rdquo; in the
+      T.140 application protocol function with the function code &ldquo;c&rdquo;. The
+      identifier shall thus be formatted like this: SOS c n
+      ST, where SOS and ST are coded as specified in <xref
+      target="T.140">ITU-T T.140</xref>. The "c" is the letter "c". The n parameter
+      value is a string uniquely identifying the source. This parameter shall be kept short
+      so that it can be repeated in the transmission without concerns for
+      network load.</t>
+<t> A receiving UA SHOULD separate text from the different sources and
+      identify and display them accordingly.</t>
         
 
 			<t>Pros:  </t>
@@ -405,7 +422,7 @@ for backwards interoperability with conference-unaware endpoints.
 								   
     </section>    	
       </section>
-	<section title="RTT bridging in the WebRTC environment with one data channel per source>		
+	<section title="RTT bridging in the WebRTC environment with one data channel per source">		
 <t>	
 Within WebRTC, rea-time text is specified to be carried in WebRTC data 
 channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A straightforward way to handle
@@ -436,7 +453,13 @@ from a source of a control code extension "c" followed by a string representing 
 <t>Cons: This solution has higher overhead on the media contents level than the WebRTC solution above. 
 Standardisation of the new control code "c" in ITU-T T.140 is required.</t>
 		
-	    </section>										 
+	    </section>	
+<section title="Preferred multi-party RTT method">
+<t>The method to implement for multi-party RTT when no other method is explicitly agreed between 
+implementing parties is for SIP: "RTP Translator sending one stream of RTT for each participant".
+<t>The method to implement for multi-party RTT when no other method is explicitly agreed between 
+implementing parties is for WebRTC: "RTT bridging in the WebRTC environment with one data channel per source".
+
 			
       </section>
 
@@ -461,15 +484,67 @@ notifications to the UA about entering and disappearing conference participants 
 		The mechanism is described in detail in RFC 4579. </t>
 	</section>
 	<section title="Real-time text conference-awareness detection>
-			
+<t>Before a conference media server starts sending multi-party RTT to a UA, a verification of its ability
+	to handle multi-party RTT must be made. This verification can be done in a number of ways. The most 
+apparent ways are specified here and their pros and cons described. One of the methods is selected to be the 
+one to be used by implementations according to this specification.</t>
+<section title="Implicit RTT multi-party capability indication">
+<t>
+Capability for RTT multi-party handling can be decided to be implicitly indicated by session control items. </t>
+<t>The focus may implicitly indicate muti-party RTT capability by including the media child with value "text" 
+in the RFC 4575 conference-info provided in conference notifications.</t>
+<t>A UA may implicitly indicate multi-party RTT capability by including the text media in the SDP in the session
+ control transactions with the conference focus after the subscription to the conference has taken place.  </t>
+<t>The implicit RTT capability indication means for the focus that it can handle multi-party RTT according to 
+the preferred method indicated in the RTT multi-party methods section above.</t>
+<t>The implicit RTT capability indication means for the UA that it can handle multi-party RTT according to 
+the preferred method indicated in the RTT multi-party methods section above.</t>
+<t>If the focus detects that a UA implicitly declared RTT multi-party capability, it SHALL provide RTT 
+according to the preferred method.</t>
+<t>If the focus detects that the UA does not indicate any RTT multi-party capability, then it shall provide 
+RTT multi-party text in the way specified for conference-unaware UA above.
+<t>If the UA detects that the focus has implicitly declared RTT multi-party capability, it shall be prepared
+ to present RTT in a multi-party fashion according to the preferred method.</t>													  
+		
+<t>Pros: Acceptance of implicit multi-party capability implies that no standardisation of explicit RTT 
+multi-party capability exchange is required.</t> 		
+<t>Cons: There may be a desire to indicate conference-awareness in general, but not for RTT. 
+Then the method called "Mixing for conference-unaware user agents" should be used as a lower functionality fallback.
+There is no way to provide that indication by the UA according to the specification of the implicit method above. 
+The solution must be that no conference awareness is indicated by the UA when it has no RTT multi-party capability.</t>
+<t>If other methods for multi-party RTT are to be used in the same implementation environment as the preferred ones,
+	then capability exchange needs to be defined for them. </t>
+	</section>
 
-		
-		
-		
-		
-		
-		
-		Capability for the mixer-based model is indicated by
+<section title="RTT multi-party capability declared by SIP media-tags">
+<t>Specifications for RTT multi-party capability declarations can be agreed for use as SIP media feature tags, to be 
+exchanged during SIP call control operation according to the mechanisms in RFC 3840 and RFC 3841.
+Capability for the RTT Multi-party capability is then indicated by the media feature tag "rtt-mixer", with one
+ or more of its possible values in a comma-separated list.</t>
+	<t>The possible values in the list are:</t>
+	     
+      <list style="empty">
+	      <t>rtp-translator</t>
+          <t>rtp-mixer</t>
+
+          <t>t140-mixer</t>
+          <t>rtp-mesh</t>
+	      <t>multi-session</t>
+      
+        </list></t>
+<t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	<t>When no common method is declared, then only the fallback method can be used.</t>
+	
+	<t>Pros: Provides a clear decision method.</t>
+	<t>Can be extended with new mixing methods.</t>
+	<t>Can guide call routing to a suitable capable focus.</t>
+	
+	<t>Con: If 
+
+	
+	
+	
+	
         both the focus and the user agent. 
 		
 		by the media tag
@@ -498,7 +573,8 @@ notifications to the UA about entering and disappearing conference participants 
 
       <t>As soon as a new member is added to the RTP session, its
       characteristics shall be transmitted in RTCP SDES CNAME and NAME reports
-      according to section 6.5 in RFC 3550.</t>
+      according to section 6.5 in RFC 3550. The information about the participant
+ MUST also be included in the conference data including the text media member in a notification according to RFC 4575.</t>
 
       <t>The RTCP SDES report, SHOULD contain identification of the source
       represented by the CSRC identifier. This identification MUST contain the
@@ -545,57 +621,6 @@ notifications to the UA about entering and disappearing conference participants 
       identifier of text from the user of the UA.</t>
     </section>
 
-    <section title="Presentation level source indicator">
-      <t>In certain application environments, it may be known to be unsuitable
-      to use the CSRC identification on the RTP level as the base for
-      identificating the source of text. In such cases, an inline coding of
-      the source of text SHOULD be applied in the data stream itself, and an
-      RTP mixer function normally without CSRC identification used for
-      coordinating the sources of text into one RTP stream.</t>
-
-      <t>The support of this mixer type is indicated by the SIP header
-      rtt-mix=t140, both by the focus and the user agent.</t>
-
-      <t>Information uniquely identifying each user in the multi-party session
-      SHALL then be placed as the parameter value &ldquo;cn&rdquo; in the
-      T.140 application protocol function with the function code "c". The
-      identifier shall thus be formatted like this: SOS c cn field contents
-      ST, where SOS and ST are coded as specified in <xref
-      target="T.140">ITU-T T.140</xref>. The cn parameter shall be kept short
-      so that it can be repeated in the transmission without concerns for
-      network load.</t>
-
-      <t>The information otherwise conveyed in the NAME field of an SDES
-      packet SHOULD then be placed as the parameter value in the T.140
-      application protocol function with the function code "n".</t>
-
-      <t>A T.140 application protocol function with the function code "c" MUST
-      be included in the text in the beginning of text when the source of the
-      text changes. A T.140 application protocol function with the function
-      code "c" MAY be repeated in the text from the same the source. A T.140
-      application protocol function with the function code "n" MAY be included
-      in the text to further provide identification of the transmitting party.
-      This information SHOULD also be provided in the SDES name field. A
-      receiving UA SHOULD separate text from the different sources and
-      identify and display them accordingly.</t>
-
-      <t>In this case, the mixer can use the redundancy transmission function
-      of RFC 4103 without restrictions.</t>
-    </section>
-
-    <section title="Mixing for conference-unaware user agents">
-      <t>Multi-party real-time text contents can be transmitted to
-      conference-unaware user agents if source labeling and formatting of the
-      text is performed by a mixer. This method has the limitations that the
-      format of source identification is purely controlled by the mixer, and
-      that only one source at a time is allowed to present in real-time. Other
-      sources need to be stored temporarily waiting for an appropriate moment
-      to switch the source of transmitted text.</t>
-
-      <t>This method is used when no exchange of the rtt-mixer media tag has
-      occurred in the session setup. Support for the method can however be
-      expressed by the focus by the SIP media tag rtt-mixer=text-mixer.</t>
-    </section>
 
     <section anchor="IANA" title="IANA Considerations">
       <t>This document Introduces the SIP media tag rtt-mixer, with a
