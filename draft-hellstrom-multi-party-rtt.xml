@@ -228,17 +228,17 @@
 	<t>Conferencing applies to any kind of media stream by which users may want to communicate... 
         Ref 3GPP TS 24.147</t>
 	<t>The framework for SIP conferences is specified in RFC 4353. Ref 3GPP TS 24.147</t>	
-	</section
+	    </section>
 
       <section title="Coordination of text RTP streams">
         <t>Coordinating and sending text RTP streams in the multi-party session can be done in a number of ways. 
 	The most suitable methods are specified here with pros and cons.</t>
 		
-	<section title="RTP Mixer sending one mixed stream of RTT, with participants indicated in CSRC>
+	<section title="RTP Mixer sending one mixed stream of RTT, with participants indicated in CSRC">
 	<t>	
 	An RTP media mixer combines text from all participants except from the receiving endpoint into one
         RTP stream , thus all using the same
-        destination address/port combination, the same RTP SSRC and , one sequence number series as
+        destination address/port combination, the same RTP SSRC and, one sequence number series as
         described in Section 7.1 and 7.3 of RTP <xref target="RFC3550">RFC
         3550</xref> about the Mixer function. The sources of the text
         in each RTP packet are identified by the CSRC parameters in the RTP packets, containing the
@@ -266,8 +266,7 @@
         contents so that the loss marker can be inserted in the most likely struck stream.</t>
 			
       </section>
-	<section title="RTP Translator sending one stream of RTT for each participant,
-        with participants indicated by SSRC">		
+	<section title="RTP Translator sending one stream of RTT for each participant, with participants indicated by SSRC">		
 	<t>Within the RTP session, text from all participants are transmitted from the
         RTP media translator in a separate RTP stream, thus using the same
         destination address/port combination, but separate RTP SSRC parameters and sequence number series as
@@ -406,9 +405,9 @@ and session information belonging to the source.</t>
 <t>Cons: With a high number of participants, the overhead of establishing the high number of data channels required may be high.</t>
 		
 </section>
-<section title="RTT bridging in the WebRTC environment with one common data channel>		
+<section title="RTT bridging in the WebRTC environment with one common data channel">		
 <t>	
-Within WebRTC, rea-time text is specified to be carried in WebRTC data 
+Within WebRTC, real-time text is specified to be carried in WebRTC data 
 channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A way to handle
 multi-party RTT is for the bridge combine text from all sources into one data channel and insert the sources by a new control code for source in the ITU-T T.140 format.</t>
 This method is touched in a corresponding section for RTP transmission above. </t>	
@@ -450,7 +449,7 @@ implementing parties is for WebRTC: "RTT bridging in the WebRTC environment with
 	notifications to the UA about entering and disappearing conference participants and their media capabilities.
 	The mechanism is described in detail in RFC 4579. </t>
 	</section>
-	<section title="Real-time text conference-awareness detection>
+	<section title="Real-time text conference-awareness detection">
 	<t>Before a conference media server starts sending multi-party RTT to a UA, a verification of its ability
 	to handle multi-party RTT must be made. This verification can be done in a number of ways. The most 
 	apparent ways are specified here and their pros and cons described. One of the methods is selected to be the 
@@ -509,7 +508,7 @@ implementing parties is for WebRTC: "RTT bridging in the WebRTC environment with
 	<t>Con: Requires standardization and IANA registration.</t>
 	<t>Cannot be used in the WebRTC environment.</t>
 	</section>
-	<section title="SDP media attribute for RTT multi-party capability indication"
+	<section title="SDP media attribute for RTT multi-party capability indication">
 	<t>An attribute can be specified on media level, to be used in text media SDP 
 	declarations for negotiating RTT multi-party capabilities.
 	The attribute can have the name "rtt-mixer", with one
