@@ -448,10 +448,31 @@ Standardisation of the new control code "c" in ITU-T T.140 is required.</t>
         (SIP) Call Control - Conferencing for User Agents. The nomenclature of
         these specifications are used here.</t>
 
-        <t>The procedures for the mixer-based model shall only be applied if a
-        capability exchange for mixer-based real-time text transmission has
-        been completed. Capability for the mixer-based model is indicated in aby
-        both the focus and the user agent by the media tag
+<section title="Conference-awareness capability detection"> 	      
+        <t>The procedures for a conference-aware model for RTT-transmission shall only be applied if a
+        capability exchange for conference-aware real-time text transmission has
+        been completed and a supported method for multi-party real-time text transmission can be identified.</t>
+	
+	<section title="Basic conference-awareness detection">
+	<t>A method for detection of conference-awareness for centralized SIP conferencing is
+ specified in RFC 4579. The focus sends the "isfocus" feature tag in a Contact header. This causes 
+the conference-aware UA to subscribe to conference notifications from the focus. The focus then sends 
+notifications to the UA about entering and disappearing conference participants and their media capabilities.
+		The mechanism is described in detail in RFC 4579. </t>
+	</section>
+	<section title="Real-time text conference-awareness detection>
+			
+
+		
+		
+		
+		
+		
+		
+		Capability for the mixer-based model is indicated by
+        both the focus and the user agent. 
+		
+		by the media tag
         rtt-mixer=rtp-mix</t>
       </section>
     </section>
