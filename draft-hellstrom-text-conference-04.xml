@@ -139,18 +139,20 @@
          keywords will be used for the search engine. -->
 
     <abstract>
-      <t>This memo specifies methods for text media handling in multi-party
-      calls. The main solution is to carry Real-Time text (RTT) by the RTP protocol
+      <t>This memo specifies methods for Real-Time Text (RTT) media handling in multi-party
+      calls. The main solution is to carry Real-Time text by the RTP protocol
       in a time-sampled mode according to RFC 4103. The main solution for centralized
       multi-party handling of real-time text is achieved through a media
       control unit coordinating multiple RTP text streams into one single
-      RTP session.
+	      RTP session.</t>
+	    <t>
       Identification for the streams are provided through the RTCP messages.
       This mechanism enables the receiving application to present the received
       real-time text medium in different ways according to user preferences.
       Some presentation related features are also described explaining
-      suitable variations of transmission and presentation of text. Call
-      control features are described for the SIP environment, while the
+      suitable variations of transmission and presentation of text. 
+	    </t>	    
+<t>Call control features are described for the SIP environment, while the
       transport mechanisms would be suitable for any IP based call control
       environment using RTP transport. A number of alternative methods for 
       providing the multi-party negotiation, transmission and presentation are 
@@ -158,7 +160,8 @@
       methods using a single RTP stream and source identification inline in the 
       text stream are also described, one of them being provided as a lower 
       functionality fallback method for endpoints with no multi-party awareness 
-      for RTT. Brief information is also provided for multi-party RTT in the WebRTC environment.  </t>
+	for RTT.</t>
+	    <t>Brief information is also provided for multi-party RTT in the WebRTC environment.  </t>
     </abstract>
   </front>
 
@@ -181,7 +184,9 @@
       <t>Transport of real-time text is specified in <xref
       target="RFC4103">RFC 4103</xref> RTP Payload for text conversation. It
       makes use of <xref target="RFC3550">RFC 3550</xref> Real Time Protocol,
-      for transport, and is usually used in the SIP Session Initiation
+      for transport. Robustness against network transmission problems is normally
+ achieved through RFC 2198 based redundancy transmission, with one primary 
+and two redundant transmission of each text element. This transport is usually used in the SIP Session Initiation
       Protocol <xref target="RFC3261">RFC 3261</xref> environment.</t>
 
       <t>A very brief overview of functions for real-time
@@ -221,12 +226,16 @@
       going to have real-time text exchange with the others.</t>
 	    
       <t>The different possible mechanisms for mixing and transporting RTT differs in the way they multiplex
-	      the text streams and how they identify the sources of the streams.</t>
+	      the text streams and how they identify the sources of the streams. RFC 7667 describes a number
+ of possible use cases for RTP. This specification
+ refers to different sections of RFC 7667 for further reading of the situations caused by the different
+ possible design choices.</t>
 	<section title="Requirements on multi-party RTT">
-		<t>The following requirements are placed on multi-party RTT.</t>
+		<t>The following requirements are placed on multi-party RTT:</t>
+	<t>The solution shall be applicable to IMS (3GPP TS 22.173), SIP based VoIP and Next Generation Emergency Services (NENA i3, EENA NG LTD, RFC 6443). </t> 
 		<t>The transmission interval for text must not be longer than 500 milliseconds when there is anything available to send. Ref ITU-T T.140.</t>
 		<t>If text loss is detected or suspected, a missing text marker shall be inserted in the text stream where the loss is detected or suspected. Ref ITU-T T.140 Amendment 1. ETSI EN 301 549</t>
-		<t>The display of text from the members of the conversation should be arranged so that the text from
+		<t>The display of text from the members of the conversation shall be arranged so that the text from
 each participant is clearly readable, and its source and the relative timing of entered text is visualized
 in the display. Mechanisms for looking back in the contents from the current session should be
 			provided. The text should be displayed as soon as it is received. Ref ITU-T T.140 </t>
@@ -248,15 +257,18 @@ in the display. Mechanisms for looking back in the contents from the current ses
 		The most suitable methods are specified here with pros and cons.</t>
 		
 		<section title="RTP Mixer sending one stream of RTT, with participants indicated in CSRC>
-		
-	Within each RTP session, text from all participants are transmitted from the
-        media mixer in the same RTP stream, thus all using the same
+	<t>	
+	An RTP media mixer combines text from all participants except from the receiving endpoint into one
+ RTP stream , thus all using the same
         destination address/port combination, the same RTP SSRC and , one sequence number series as
         described in Section 7.1 and 7.3 of RTP <xref target="RFC3550">RFC
         3550</xref> about the Mixer function. The sources of the text
         in each RTP packet are identified by the CSRC parameters in the RTP packets, containing the
         SSRC of the initial sources of text. The order of the CSRC parameters are the
-	same as the order of the redundant and primary data fields in the packet. </t>
+	same as the order of the redundant and primary data fields in the packet. If all redundancy
+ blocks in a packet are from the same source,
+ then it is allowed to use only one CSRC in the RTP packet. This method is described in RFC 7667, 
+section 3.6.3 Media switching mixer.</t>
 								      
         <t>The identification of the source is made through the RTCP SDES
         CNAME and NAME packets as described in RTP<xref
@@ -273,18 +285,20 @@ in the display. Mechanisms for looking back in the contents from the current ses
 			<t>Cons: When more consecutive packet loss than the number of generations of 
 			redundant data appears, it is not possible to deduct the source of the totally lost data. 
 			Therefore it is not possible to know in which stream to insert the missing text marker. 
-			Calculations of most likely source can however be made so that it is quite likely 
-			that the marker is inserted in the correct stream.</t>
+It MAY be acceptible to either indicate a general loss indication, or insert a loss marker in all streams.
+			Calculations of most likely source can however be made from received RTP and RTCP 
+contents so that the loss marker can be inserted in the most likely struck stream.</t>
 			
       </section>
 	<section title="RTP Translator sending one stream of RTT for each participant, with participants indicated by SSRC>		
-	Within each RTP session, text from all participants are transmitted from the
-        media mixer in the a separate RTP stream, thus using the same
-        destination address/port combination, but separate RTP SSRC parameters and sequence number series. as
+	<t>Within the RTP session, text from all participants are transmitted from the
+        RTP media translator in a separate RTP stream, thus using the same
+        destination address/port combination, but separate RTP SSRC parameters and sequence number series as
         described in Section 7.1 and 7.2 of RTP <xref target="RFC3550">RFC
         3550</xref> about the Translator function. The sources of the text
-        in each RTP packet are identified by the sSRC parameters in the RTP packets, containing the
-        SSRC of the initial sources of text.</t>
+        in each RTP packet are identified by the SSRC parameters in the RTP packets, containing the
+        SSRC of the initial sources of text. This method is described in RFC 7667, 
+section 3.5.1 Relay-transport translator or 3.5.2 Media translator.</t>
 	
 		
         <t>The identification of the source is made through the RTCP SDES
@@ -305,13 +319,15 @@ in the display. Mechanisms for looking back in the contents from the current ses
 	    
 		<section title="RTP Mixer sending one stream of RTT, with participants indicated by a control code in the text stream>
 		
-	Within each RTP session, text from all participants are transmitted from the
-        media mixer in the same RTP stream, thus all using the same
+	<t>Text from all participants except the receiving one is transmitted from the
+        media mixer in the same RTP session and stream, thus all using the same
         destination address/port combination, the same RTP SSRC and , one sequence number series as
         described in Section 7.1 and 7.3 of RTP <xref target="RFC3550">RFC
         3550</xref> about the Mixer function. The sources of the text
-        in each RTP packet are identified by a new defined T.140 control code "c" followed by a unique identification of the source in UTF-8 string format.</t>
-										 The receiver can use the string for presenting the source of text.</t> 							      
+        in each RTP packet are identified by a new defined T.140 control code "c" 
+followed by a unique identification of the source in UTF-8 string format.</t>
+<t>The receiver can use the string for presenting the source of text. This method is described in RFC 7667, 
+section 3.6.2 Media mixing mixer.</t> 							      
         
 
 			<t>Pros:  </t>
@@ -328,10 +344,32 @@ in the display. Mechanisms for looking back in the contents from the current ses
 			 that the marker is inserted in the correct stream.</t>
 			<t>The mixer needs to be able to generate suitable and unique source identifications
 			 which are suitable as labels for the sources. </t>
-			<t>Requires an extension on the ITU-T T.140 standard, best made by the ITU. <t>
+			<t>Requires an extension on the ITU-T T.140 standard, best made by the ITU. </t>
 										 
 			
       </section>
+
+	    
+		<section title="Mesh of RTP endpoints>
+		
+	<t>Text from all participants are transmitted directly to all others in one RTP session, without a central bridge. The sources of the text
+        in each RTP packet are identified by the source network address and the SSRC. </t>
+ This method is described in RFC 7667, 
+section 3.4 Point to multi-point using mesh.</t> 							      
+        
+
+			<t>Pros:  </t>
+			<t>When loss of packets occur, 
+			it is possible to recover text from redundancy at loss of up to the number
+			of redundancy levels carried in the RFC 4103 stream. (normally primary and 
+			two redundant levels.</t>
+			<t>This method can be implemented with most RTP implementations.</t>
+			<t>Transmitted text can also be used with other transports than RTP</t>
+			<t>Cons: This model is not described in IMS, NENA and EENA specifications.</t>
+										 
+			
+      </section>									 
+										 
 	 <section title="Mixing for conference-unaware user agents">
       <t>Multi-party real-time text contents can be transmitted to
       conference-unaware user agents if source labeling and formatting of the
@@ -346,7 +384,9 @@ a number of places in text where a switch can be allowed, including new line,
 end of sentence, end of phrase, a period of inactivity, and a word separator after a long time
 of active transmission.</t>
 
-      <t>This method MAY be used when no support for multi-party awareness is detected in the receiving endpoint.</t>
+      <t>This method MAY be used when no support for multi-party awareness is detected in the 
+receiving endpoint.This method is described in RFC 7667, 
+section 3.6.2 Media mixing mixer.</t>
    <t>Pros: Can be transmitted to conference-unaware endpoints.</t>
    <t>Can be used with other transports than RTP</t>
 <t>Cons: Does not allow full real-time presentation of more than one source at a time. Text from other sources will 
@@ -358,11 +398,45 @@ levels of labels in the presentation, one for the mixer and one for the sources.
 <t>When loss of more packets than can be recovered by the redundancy appears, it is not possible to detect which source 
 was struck by the loss. It is also possible that a source switch occurred during the loss, and therefore a false indication
    of the source of text can be provided to the user after such loss.</t>
+<t>Because of all these cons, this method MUST NOT be used as the main method, but only as the last resort 
+for backwards interoperability with conference-unaware endpoints.
  
  
 								   
     </section>    	
-										 
+      </section>
+	<section title="RTT bridging in the WebRTC environment with one data channel per source>		
+<t>	
+Within WebRTC, rea-time text is specified to be carried in WebRTC data 
+channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A straightforward way to handle
+multi-party RTT is for the bridge to open one data channel per source towards the receiving participants.
+</t>
+	
+		
+        <t>The identification of the source is made through the Label property of the channel, 
+and session information belonging to the source.</t>
+
+
+<t>Pros:  This is a straightforward solution. </t> 
+<t>Cons: With a high number of participants, the overhead of establishing the high number of data channels required may be high.</t>
+		
+	    </section>
+	<section title="RTT bridging in the WebRTC environment with one common data channel>		
+<t>	
+Within WebRTC, rea-time text is specified to be carried in WebRTC data 
+channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A way to handle
+multi-party RTT is for the bridge combine text from all sources into one data channel and insert the sources by a new control code for source in the ITU-T T.140 format.</t>
+		This method is touched in a corresponding section for RTP transmission above. </t>	
+		
+        <t>The identification of the source is made through insertion in the beginning of each text transmission 
+from a source of a control code extension "c" followed by a string representing the source.</t>
+
+
+<t>Pros:  This solution has relatively low overhead on session and network level </t> 
+<t>Cons: This solution has higher overhead on the media contents level than the WebRTC solution above. 
+Standardisation of the new control code "c" in ITU-T T.140 is required.</t>
+		
+	    </section>										 
 			
       </section>
 
