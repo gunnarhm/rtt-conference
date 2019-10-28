@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+     There has to be one entity for each item to be referenced. 
+     An alternate method (rfc include) is described in the references. -->
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC3261 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3261.xml">
+<!ENTITY RFC3550 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.3550.xml">
+<!ENTITY RFC4103 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4103.xml">
+<!ENTITY RFC4353 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4353.xml">
+<!ENTITY RFC4575 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4575.xml">
+<!ENTITY RFC4579 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4579.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="bcp" docName="draft-hellstrom-multi-party-rtt-00"
+     ipr="trust200902">
+  <!-- category values: std, bcp, info, exp, and historic
+     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
+        or pre5378Trust200902
+     you can add the attributes updates="NNNN" and obsoletes="NNNN" 
+     they will automatically be output with "(if approved)" -->
+
+  <!-- ***** FRONT MATTER ***** -->
+
+  <front>
+    <!-- The abbreviated title is used in the page header - it is only necessary if the 
+         full title is longer than 39 characters -->
+
+    <title abbrev="Real-time text multi-party handling">Real-time text media handling in 
+    multi-party conferences</title>
+
+    <!-- add 'role="editor"' below for the editors if appropriate -->
+
+    <!-- Another author who claims to be an editor -->
+
+    <author fullname="Gunnar Hellstrom" initials="G." surname="Hellstrom">
+      <organization>Omnitor</organization>
+
+      <address>
+        <postal>
+          <street>Esplanaden 30</street>
+
+          <!-- Reorder these if your country does things differently -->
+
+          <city>Vendelso</city>
+
+          <code>SE-136 70</code>
+
+          <country>SE</country>
+        </postal>
+
+        <phone>+46 708 204 288</phone>
+
+        <email>gunnar.hellstrom@omnitor.se</email>
+
+        <uri>www.omnitor.se</uri>
+
+        <!-- uri and facsimile elements may also be added -->
+      </address>
+    </author>
+
+    <date month="October" year="2019" />
+
+    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill 
+         in the current day for you. If only the current year is specified, xml2rfc will fill 
+	 in the current day and month for you. If the year is not the current one, it is 
+	 necessary to specify at least a month (xml2rfc assumes day="1" if not specified for the 
+	 purpose of calculating the expiry date).  With drafts it is normally sufficient to 
+	 specify just the year. -->
+
+    <!-- Meta-data Declarations -->
+
+    <area>General</area>
+
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <!-- WG name at the upperleft corner of the doc,
+         IETF is fine for individual submissions.  
+	 If this element is not present, the default is "Network Working Group",
+         which is used by the RFC Editor as a nod to the history of the IETF. -->
+
+    <keyword>Internet-Draft</keyword>
+
+    <!-- Keywords will be incorporated into HTML output
+         files in a meta tag but they have no effect on text or nroff
+         output. If you submit your draft to the RFC Editor, the
+         keywords will be used for the search engine. -->
+
+    <abstract>
+      <t>This memo specifies methods for Real-Time Text (RTT) media handling in multi-party
+      calls. The main solution is to carry Real-Time text by the RTP protocol
+      in a time-sampled mode according to RFC 4103. The main solution for centralized
+      multi-party handling of real-time text is achieved through a media
+      control unit coordinating multiple RTP text streams into one single
+      RTP session.</t>
+	    <t>
+      Identification for the streams are provided through the RTCP messages.
+      This mechanism enables the receiving application to present the received
+      real-time text medium in different ways according to user preferences.
+      Some presentation related features are also described explaining
+      suitable variations of transmission and presentation of text. 
+	    </t>	    
+      <t>Call control features are described for the SIP environment, while the
+      transport mechanisms would be suitable for any IP based call control
+      environment using RTP transport. A number of alternative methods for 
+      providing the multi-party negotiation, transmission and presentation are 
+      discussed and a recommendation for the main one is specified. Two alternative
+      methods using a single RTP stream and source identification inline in the 
+      text stream are also described, one of them being provided as a lower 
+      functionality fallback method for endpoints with no multi-party awareness 
+      for RTT.</t>
+      <t>Brief information is also provided for multi-party RTT in the WebRTC environment.  </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>Real-time text (RTT) is a medium in real-time conversational sessions. Text
+      entered by participants in a session is transmitted in a time-sampled
+      fashion, so that no specific user action is needed to cause
+      transmission. This gives a direct flow of text that is suitable in a
+      real-time conversational setting. The real-time text medium can be
+      combined with other media in multimedia sessions.</t>
+
+      <t>A number of multimedia sessions can be combined in a multi-party
+      session. This memo specifies how the real-time text streams are handled
+      in such multi-party sessions.</t>
+
+      <t>The description is mainly focused on the transport level, but also
+      describes a few session and presentation level aspects.</t>
+
+      <t>Transport of real-time text is specified in <xref
+      target="RFC4103">RFC 4103</xref> RTP Payload for text conversation. It
+      makes use of <xref target="RFC3550">RFC 3550</xref> Real Time Protocol,
+      for transport. Robustness against network transmission problems is normally
+      achieved through RFC 2198 based redundancy transmission, with one primary 
+      and two redundant transmission of each text element. This transport is
+      usually used in the SIP Session Initiation Protocol 
+      <xref target="RFC3261">RFC 3261</xref> environment.</t>
+
+      <t>A very brief overview of functions for real-time
+      text handling in multi-party sessions is described in <xref
+      target="RFC4579">RFC 4597</xref> Conferencing Scenarios, sections 4.8 and 4.10. This
+      specification builds on that description and indicates which
+      protocol mechanisms should be used to implement multi-party handling of
+      text in real-time sessions.</t>
+
+      <section title="Requirements Language">
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in <xref
+        target="RFC2119">RFC 2119</xref>.</t>
+      </section>
+    </section>
+
+    <section title="Centralized conference model">
+      <t>In the centralized conference model for SIP, introduced in <xref
+      target="RFC4353">RFC 4353</xref> A Framework for Conferencing with the Session
+      Initiation Protocol (SIP), one function co-ordinates the
+      sessions with participants in the multi-party session. This function
+      also controls media mixer functions for the media appearing in the
+      session. The central function is common for control of all media, while
+      the media mixers may work differently for each medium.</t>
+
+      <t>The central function is called the Focus UA and may be co-located in
+      an advanced terminal including multi-party control functions, or it may
+      be located in a separate location. Many variants exist for setting up
+      sessions including the multipoint control centre, It is not within scope
+      of this description to describe these, but rather the media specific
+      handling in the mixer required to handle multi-party calls.</t>
+
+      <t>The main principle for handling real-time text media in a centralized
+      conference is that one RTP session for real-time text is established
+      between the multipoint media control centre and each participating endpoint which is
+      going to have real-time text exchange with the others.</t>
+	    
+      <t>The different possible mechanisms for mixing and transporting RTT differs in the way they multiplex
+      the text streams and how they identify the sources of the streams. RFC 7667 describes a number
+      of possible use cases for RTP. This specification refers to different sections of RFC 7667
+      for further reading of the situations caused by the different possible design choices.</t>
+	    
+      <section title="Requirements on multi-party RTT">
+        <t>The following requirements are placed on multi-party RTT:</t>
+	<t>The solution shall be applicable to IMS (3GPP TS 22.173), SIP based 
+	VoIP and Next Generation Emergency Services (NENA i3, EENA NG LTD, RFC 6443). </t> 
+	<t>The transmission interval for text must not be longer than 500 milliseconds when
+        there is anything available to send. Ref ITU-T T.140.</t>
+	<t>If text loss is detected or suspected, a missing text marker shall be inserted in
+        the text stream where the loss is detected or suspected. Ref ITU-T T.140 Amendment 1. 
+        ETSI EN 301 549</t>
+	<t>The display of text from the members of the conversation shall be arranged so that the text from
+        each participant is clearly readable, and its source and the relative timing of entered text is visualized
+        in the display. Mechanisms for looking back in the contents from the current session should be
+	provided. The text should be displayed as soon as it is received. Ref ITU-T T.140 </t>
+	<t>Bridges must be multimedia capable (voice, video, text). Ref NENA i3 STA-010.2. </t>
+	<t>R7: It MUST be possible to use real-time text in conferences both as
+        a medium of discussion between individual participants (for example,
+        for sidebar discussions in real-time text while listening to the main
+        conference audio) and for central support of the conference with
+	real-time text interpretation of speech. Ref RFC 5194. </t>
+	<t>Conferencing procedures are documented in RFC 4579. Ref NENA i3 STA-010.2. </t>
+	<t>Conferencing applies to any kind of media stream by which users may want to communicate... 
+        Ref 3GPP TS 24.147</t>
+	<t>The framework for SIP conferences is specified in RFC 4353. Ref 3GPP TS 24.147</t>	
+	</section
+
+      <section title="Coordination of text RTP streams">
+        <t>Coordinating and sending text RTP streams in the multi-party session can be done in a number of ways. 
+	The most suitable methods are specified here with pros and cons.</t>
+		
+	<section title="RTP Mixer sending one mixed stream of RTT, with participants indicated in CSRC>
+	<t>	
+	An RTP media mixer combines text from all participants except from the receiving endpoint into one
+        RTP stream , thus all using the same
+        destination address/port combination, the same RTP SSRC and , one sequence number series as
+        described in Section 7.1 and 7.3 of RTP <xref target="RFC3550">RFC
+        3550</xref> about the Mixer function. The sources of the text
+        in each RTP packet are identified by the CSRC parameters in the RTP packets, containing the
+        SSRC of the initial sources of text. The order of the CSRC parameters are the
+	same as the order of the redundant and primary data fields in the packet. If all redundancy
+        blocks in a packet are from the same source,
+        then it is allowed to use only one CSRC in the RTP packet. This method is described in RFC 7667,  
+        section 3.6.3 Media switching mixer.</t>
+								      
+        <t>The identification of the source is made through the RTCP SDES
+        CNAME and NAME packets as described in RTP<xref target="RFC3550"></xref>.</t>
+
+	<t>Pros:  This method has moderate overhead. </t>
+	<t>When loss of packets occur, 
+	it is possible to recover text from redundancy at loss of up to the number
+	of redundancy levels carried in the RFC 4103 stream. (normally primary and 
+	two redundant levels.</t>
+	<t>This method can be implemented with most RTP implementations.</t>
+	<t></t>
+	<t>Cons: When more consecutive packet loss than the number of generations of 
+	redundant data appears, it is not possible to deduct the source of the totally lost data. 
+	Therefore it is not possible to know in which stream to insert the missing text marker. 
+        It MAY be acceptible to either indicate a general loss indication, or insert a loss marker in all streams.
+	Calculations of most likely source can however be made from received RTP and RTCP 
+        contents so that the loss marker can be inserted in the most likely struck stream.</t>
+			
+      </section>
+	<section title="RTP Translator sending one stream of RTT for each participant,
+        with participants indicated by SSRC">		
+	<t>Within the RTP session, text from all participants are transmitted from the
+        RTP media translator in a separate RTP stream, thus using the same
+        destination address/port combination, but separate RTP SSRC parameters and sequence number series as
+        described in Section 7.1 and 7.2 of RTP <xref target="RFC3550">RFC
+        3550</xref> about the Translator function. The sources of the text
+        in each RTP packet are identified by the SSRC parameters in the RTP packets, containing the
+        SSRC of the initial sources of text. This method is described in RFC 7667, 
+        section 3.5.1 Relay-transport translator or 3.5.2 Media translator.</t>
+	
+		
+        <t>The identification of the source is made through the RTCP SDES
+        CNAME and NAME packets as described in RTP<xref
+        target="RFC3550"></xref>.</t>
+
+        <t>Pros:  This method has moderate overhead. When loss of packets occur, 
+	it is possible to recover text from redundancy at loss of up to the number
+	of redundancy levels carried in the RFC 4103 stream. (normally primary and 
+	two redundant levels. More loss can be detected and the marker for text
+        loss can be inserted in the correct stream.</t>
+	<t>It may be possible to keep the text encrypted through the Translator.</t>
+	<t>Cons: There may be RTP implementations not supporting the Translator model. </t> 
+		
+    </section>
+
+	    
+     <section title="RTP Mixer sending one stream of RTT, with participants indicated by a control code in the text stream">
+		
+	<t>Text from all participants except the receiving one is transmitted from the
+        media mixer in the same RTP session and stream, thus all using the same
+        destination address/port combination, the same RTP SSRC and , one sequence number series as
+        described in Section 7.1 and 7.3 of RTP <xref target="RFC3550">RFC
+        3550</xref> about the Mixer function. The sources of the text
+        in each RTP packet are identified by a new defined T.140 control code "c" 
+        followed by a unique identification of the source in UTF-8 string format.</t>
+        <t>The receiver can use the string for presenting the source of text. This method is
+        on the RTP level described in RFC 7667, section 3.6.2 Media mixing mixer.</t> 
+        <t>The inline coding of the source of text is applied in the data stream itself, and an
+        RTP mixer function normally without CSRC identification used for
+        coordinating the sources of text into one RTP stream.</t>
+
+
+        <t>Information uniquely identifying each user in the multi-party session
+        is placed as the parameter value &ldquo;c&rdquo; in the
+        T.140 application protocol function with the function code &ldquo;c&rdquo;. The
+        identifier shall thus be formatted like this: SOS c nST, where SOS and ST are
+        coded as specified in <xref target="T.140">ITU-T T.140</xref>. 
+        The "c" is the letter "c". The n parameter value is a string uniquely identifying 
+        the source. This parameter shall be kept short
+        so that it can be repeated in the transmission without concerns for
+        network load.</t>
+        <t> A receiving UA SHOULD separate text from the different sources and
+        identify and display them accordingly.</t>
+        
+	<t>Pros:  </t>
+	<t>When loss of packets occur, 
+	it is possible to recover text from redundancy at loss of up to the number
+	of redundancy levels carried in the RFC 4103 stream. (normally primary and 
+	two redundant levels.</t>
+	<t>This method can be implemented with most RTP implementations.</t>
+	<t>Transmitted text can also be used with other transports than RTP</t>
+	<t>Cons: When more consecutive packet loss than the number of generations of 
+	redundant data appears, it is not possible to deduct the source of the totally lost data. 
+	Therefore it is not possible to know in which stream to insert the missing text marker. 
+	Calculations of most likely source can however be made so that it is quite likely 
+	that the marker is inserted in the correct stream.</t>
+	<t>The mixer needs to be able to generate suitable and unique source identifications
+	which are suitable as labels for the sources. </t>
+	<t>Requires an extension on the ITU-T T.140 standard, best made by the ITU. </t>									 		
+      </section>
+
+	    
+<section title="Mesh of RTP endpoints">
+		
+	<t>Text from all participants are transmitted directly to all others in one RTP session,
+        without a central bridge. The sources of the text in each RTP packet are identified by 
+        the source network address and the SSRC. </t>
+        <t>This method is described in RFC 7667, section 3.4 Point to multi-point using mesh.</t> 							      
+        
+	<t>Pros:  </t>
+	<t>When loss of packets occur, 
+	it is possible to recover text from redundancy at loss of up to the number of redundancy 
+        levels carried in the RFC 4103 stream. (normally primary and 
+	two redundant levels.</t>
+	<t>This method can be implemented with most RTP implementations.</t>
+	<t>Transmitted text can also be used with other transports than RTP</t>
+	<t>Cons: This model is not described in IMS, NENA and EENA specifications.</t>
+										 
+			
+ </section>									 
+										 
+      <section title="Mixing for conference-unaware user agents">
+      <t>Multi-party real-time text contents can be transmitted to
+      conference-unaware user agents if source labeling and formatting of the
+      text is performed by a mixer. This method has the limitations that the
+      layout of the presentation and the format of source identification is purely controlled by the mixer, and
+      that only one source at a time is allowed to present in real-time. Other
+      sources need to be stored temporarily waiting for an appropriate moment
+      to switch the source of transmitted text. The mixer controls the switching
+      of sources and inserts a source identifier in text format at the beginning of text after switch of source. 
+      The logic of trhe mixer to detect when a switch is appropriate should detect 
+      a number of places in text where a switch can be allowed, including new line, 
+      end of sentence, end of phrase, a period of inactivity, and a word separator after a long time
+      of active transmission.</t>
+
+      <t>This method MAY be used when no support for multi-party awareness is detected in the 
+      receiving endpoint.This method is described in RFC 7667, 
+      section 3.6.2 Media mixing mixer.</t>
+      <t>Pros: Can be transmitted to conference-unaware endpoints.</t>
+      <t>Can be used with other transports than RTP</t>
+      <t>Cons: Does not allow full real-time presentation of more than one source at a time. Text from other sources will 
+      be delayed, even if automatic detection of suitable moments for switching source for presentation is made by the mixer.</t>
+      <t>The only realistic presentation format is a style with the text from the different sources presented with a text label 
+      indicating source, and the text collected in a chat style presentation but with more frequent turn-taking.</t>
+      <t>Endpoints often have their own system for adding labels to the RTT presentation. In that case there will be two
+      levels of labels in the presentation, one for the mixer and one for the sources.</t>
+      <t>When loss of more packets than can be recovered by the redundancy appears, it is not possible to detect which source 
+      was struck by the loss. It is also possible that a source switch occurred during the loss, and therefore a false indication
+      of the source of text can be provided to the user after such loss.</t>
+      <t>Because of all these cons, this method MUST NOT be used as the main method, but only as the last resort 
+      for backwards interoperability with conference-unaware endpoints.							   
+    </section>    	
+      </section>
+<section title="RTT bridging in the WebRTC environment with one data channel per source">		
+<t>	
+Within WebRTC, real-time text is specified to be carried in WebRTC data 
+channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A straightforward way to handle
+multi-party RTT is for the bridge to open one data channel per source towards the receiving participants.
+</t>
+	
+		
+<t>The identification of the source is made through the Label property of the channel, 
+and session information belonging to the source.</t>
+
+
+<t>Pros:  This is a straightforward solution. </t> 
+<t>Cons: With a high number of participants, the overhead of establishing the high number of data channels required may be high.</t>
+		
+</section>
+<section title="RTT bridging in the WebRTC environment with one common data channel>		
+<t>	
+Within WebRTC, rea-time text is specified to be carried in WebRTC data 
+channels as specified in draft-ietf-mmusic-t140-usage-data-channel.A way to handle
+multi-party RTT is for the bridge combine text from all sources into one data channel and insert the sources by a new control code for source in the ITU-T T.140 format.</t>
+This method is touched in a corresponding section for RTP transmission above. </t>	
+		
+<t>The identification of the source is made through insertion in the beginning of each text transmission 
+from a source of a control code extension "c" followed by a string representing the source.</t>
+
+
+<t>Pros:  This solution has relatively low overhead on session and network level </t> 
+<t>Cons: This solution has higher overhead on the media contents level than the WebRTC solution above. 
+Standardisation of the new control code "c" in ITU-T T.140 is required.</t>
+		
+</section>	
+<section title="Preferred multi-party RTT method">
+<t>The method to implement for multi-party RTT when no other method is explicitly agreed between 
+implementing parties is for SIP: "RTP Translator sending one stream of RTT for each participant".
+<t>The method to implement for multi-party RTT when no other method is explicitly agreed between 
+implementing parties is for WebRTC: "RTT bridging in the WebRTC environment with one data channel per source".
+			
+</section>
+
+<section title="Session control of multi-party sessions">
+	<t>General session control aspects for multi-party sessions are
+        described in <xref target="RFC4575">RFC 4575</xref> A Session
+        Initiation Protocol (SIP) Event Package for Conference State, and
+        <xref target="RFC4579">RFC 4579</xref> Session Initiation Protocol
+        (SIP) Call Control - Conferencing for User Agents. The nomenclature of
+        these specifications are used here.</t>
+
+<section title="Conference-awareness capability detection"> 	      
+        <t>The procedures for a conference-aware model for RTT-transmission shall only be applied if a
+        capability exchange for conference-aware real-time text transmission has
+        been completed and a supported method for multi-party real-time text transmission can be identified.</t>
+	
+	<section title="Basic conference-awareness detection">
+	<t>A method for detection of conference-awareness for centralized SIP conferencing is
+	specified in RFC 4579. The focus sends the "isfocus" feature tag in a Contact header. This causes 
+	the conference-aware UA to subscribe to conference notifications from the focus. The focus then sends 
+	notifications to the UA about entering and disappearing conference participants and their media capabilities.
+	The mechanism is described in detail in RFC 4579. </t>
+	</section>
+	<section title="Real-time text conference-awareness detection>
+	<t>Before a conference media server starts sending multi-party RTT to a UA, a verification of its ability
+	to handle multi-party RTT must be made. This verification can be done in a number of ways. The most 
+	apparent ways are specified here and their pros and cons described. One of the methods is selected to be the 
+	one to be used by implementations according to this specification.</t>
+	<section title="Implicit RTT multi-party capability indication">
+	<t>
+	Capability for RTT multi-party handling can be decided to be implicitly indicated by session control items. </t>
+	<t>The focus may implicitly indicate muti-party RTT capability by including the media child with value "text" 
+	in the RFC 4575 conference-info provided in conference notifications.</t>
+	<t>A UA may implicitly indicate multi-party RTT capability by including the text media in the SDP in the session
+ 	control transactions with the conference focus after the subscription to the conference has taken place.  </t>
+	<t>The implicit RTT capability indication means for the focus that it can handle multi-party RTT according to 
+	the preferred method indicated in the RTT multi-party methods section above.</t>
+	<t>The implicit RTT capability indication means for the UA that it can handle multi-party RTT according to 
+	the preferred method indicated in the RTT multi-party methods section above.</t>
+	<t>If the focus detects that a UA implicitly declared RTT multi-party capability, it SHALL provide RTT 
+	according to the preferred method.</t>
+	<t>If the focus detects that the UA does not indicate any RTT multi-party capability, then it shall provide 
+	RTT multi-party text in the way specified for conference-unaware UA above.
+	<t>If the UA detects that the focus has implicitly declared RTT multi-party capability, it shall be prepared
+	to present RTT in a multi-party fashion according to the preferred method.</t>													  
+		
+	<t>Pros: Acceptance of implicit multi-party capability implies that no standardisation of explicit RTT 
+	multi-party capability exchange is required.</t> 		
+	<t>Cons: There may be a desire to indicate conference-awareness in general, but not for RTT. 
+	Then the method called "Mixing for conference-unaware user agents" should be used as a lower functionality fallback.
+	There is no way to provide that indication by the UA according to the specification of the implicit method above. 
+	The solution must be that no conference awareness is indicated by the UA when it has no RTT multi-party capability.</t>
+	<t>If other methods for multi-party RTT are to be used in the same implementation environment as the preferred ones,
+	then capability exchange needs to be defined for them. </t>
+	</section>
+
+<section title="RTT multi-party capability declared by SIP media-tags">
+	<t>Specifications for RTT multi-party capability declarations can be agreed for use as SIP media feature tags, to be 
+	exchanged during SIP call control operation according to the mechanisms in RFC 3840 and RFC 3841.
+	Capability for the RTT Multi-party capability is then indicated by the media feature tag "rtt-mixer", with one
+ 	or more of its possible values in a comma-separated list.</t>
+	<t>The possible values in the list are:</t>
+	<t>     
+      <list style="empty">
+	  <t>rtp-translator</t>
+          <t>rtp-mixer</t>
+
+          <t>t140-mixer</t>
+          <t>rtp-mesh</t>
+	  <t>multi-session</t>
+      
+      </list></t>
+	<t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	<t>When no common method is declared, then only the fallback method can be used.</t>
+	<t>If more than one text media line is included in SDP, all must be capable of using the declared RTT multi-party method.</t>
+	<t>Pros: Provides a clear decision method.</t>
+	<t>Can be extended with new mixing methods.</t>
+	<t>Can guide call routing to a suitable capable focus.</t>
+	
+	<t>Con: Requires standardization and IANA registration.</t>
+	<t>Cannot be used in the WebRTC environment.</t>
+	</section>
+	<section title="SDP media attribute for RTT multi-party capability indication"
+	<t>An attribute can be specified on media level, to be used in text media SDP 
+	declarations for negotiating RTT multi-party capabilities.
+	The attribute can have the name "rtt-mixer", with one
+ 	or more of its possible values in a comma-separated list.</t>
+	<t>The possible values in the list are:</t>
+	  <t>   
+      <list style="empty">
+	  <t>rtp-translator</t>
+          <t>rtp-mixer</t>
+
+          <t>t140-mixer</t>
+          <t>rtp-mesh</t>
+	  <t>multi-session</t>
+      
+        </list></t>
+	  <t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	  <t>When no common method is declared, then only the fallback method can be used.</t>
+
+	<t>Pros: Provides a clear decision method.</t>
+	  <t>Can be extended with new mixing methods.</t>
+	  <t>Can be used on specific text media.</t>
+	  <t>Can be used also for SDP-controlled WebRTC sessions with multiple streams in the same data channel.</t>
+	  <t>Cons: Requires standardization and IANA registration.</t>
+	  <t>Is not well defined for multi-party methods involving more than one media section for text.</t>
+	  <t>Cannot guide SIP routing.</t>
+	  </section>
+	
+	
+	<section title=Preferred capability declaration method.>
+	<t>The preferred capability declaration method is the one with SDP attributes because it is partially useable also for WebRTC.
+	</t>
+	</section>	
+	</section>
+	  
+
+	
+
+	
+	
+	
+    <section title="Identification of the source of text">
+
+      <t>As soon as a new member is added to the RTP session, its
+      characteristics shall be transmitted in RTCP SDES CNAME and NAME reports
+      according to section 6.5 in RFC 3550. The information about the participant
+      MUST also be included in the conference data including the text media member
+      in a notification according to RFC 4575.</t>
+
+      <t>The RTCP SDES report, SHOULD contain identification of the source
+      represented by the SSRC/CSRC identifier. This identification MUST contain the
+      CNAME field and MAY contain the NAME field and other defined fields of
+      the SDES report.</t>
+
+      <t>A focus UA SHOULD primarily convey SDES information received from the
+      sources of the session members. When such information is not available,
+      the focus UA SHOULD compose SSRC/CSRC, CNAME and NAME information from
+      available information from the SIP session with the participant.</t>
+    </section>
+
+    <section title="Presentation of multi-party text">
+      <t>All session participants MUST observe the SSRC/CSRC field of incoming text
+      RTP packets, and make note of what source they came from in order to be
+      able to present text in a way that makes it easy to read text from each
+      participant in a session, and get information about the source of the
+      text.</t>
+
+      <section title="Associating identities with text streams">
+        <t>A source identity SHOULD be composed from available information
+        sources and displayed together with the text as indicated in ITU-T
+        T.140 Appendix<xref target="T.140"> </xref>.</t>
+
+        <t>The source should primarily be the NAME field from incoming SDES
+        packets. If this information is not available, and the session is a
+        two-party session, then the T.140 source identity SHOULD be composed
+        from the SIP session participant information. For multi-party sessions
+        the source identity may be composed by local information if sufficient
+        information is not available in the session.</t>
+
+        <t>Applications may abbreviate the presented source identity to a
+        suitable form for the available display.</t>
+      </section>
+    </section>
+
+    <section title="Transmission of text from each user">
+      <t>UAs participating in sessions with real-time text, SHOULD send SDES
+      packets in RTCP giving values to appropriate identification fields.</t>
+
+      <t>The CNAME field SHALL be included in SDES packets.</t>
+
+      <t>The NAME field should be given a value that is suitable as an
+      identifier of text from the user of the UA.</t>
+    </section>
+
+
+    <section anchor="IANA" title="IANA Considerations">
+	    <t>    TBD after decision of proposed preferences in the draft.</t>
+	    <t> TBD EXAMPLE to be adjusted after decision.</t>
+      <t>This document Introduces the SIP media tag rtt-mixer, with a
+      comma-separated parameter list containing the following possible
+      values:<list style="empty">
+	      <t>rtp-translator</t>
+	      <t>rtp-mixer</t>
+
+          <t>t140-mixer</t>
+	      <t>rtp-mesh</t>
+          <t>text-mixer</t>
+	      <t>multi-session</t>
+        </list></t>
+
+      <t>rtp-mixer indicates capability for using the RTP-mixer based
+      presentation of multi-party text. t140-mixer indicates capability for
+      using the T.140 control code source indicators in a mixer. text-mixer
+      indicates capability for using text-level control over formatting and
+      presentation of multi-party text presentation.</t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>The security considerations valid for RFC 4103 and RFC 3550 are valid
+      also for the multi-party sessions with text.</t>
+    </section>
+
+    <section title="Congestion considerations">
+      <t>The congestion considerations described in RFC 4103 are valid also
+      for multi-party use of the real-time text RTP transport. A risk for
+      congestion may appear if a number of conference participants are active
+      transmitting text simultaneously, because this multi-party transmission
+      method does not allow multiple sources of text to contribute to the same
+      packet.</t>
+
+      <t>In situations of risk for congestion, the Focus UA MAY combine
+      packets from the same source to increase the transmission interval per
+      source up to one second. Local conference policy in the Focus UA may be
+      used to decide which streams shall be selected for such transmission
+      frequency reduction.</t>
+    </section>
+<section title="Acknowledgements">
+	<t>Arnoud van Wijk for contributions to an earlier, expired draft of this memo.</t>
+</section>
+  </middle>
+
+  <!--  *****BACK MATTER ***** -->
+
+  <back>
+    <!-- References split into informative and normative -->
+
+    <!-- There are 2 ways to insert reference entries from the citation libraries:
+     1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
+     2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
+        (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+
+     Both are cited textually in the same manner: by using xref elements.
+     If you use the PI option, xml2rfc will, by default, try to find included files in the same
+     directory as the including file. You can also define the XML_LIBRARY environment variable
+     with a value containing a set of directories to search.  These can be either in the local
+     filing system or remote ones accessed by http (http://domain/dir/... ).-->
+
+    <references title="Normative References">
+      <!--?rfc include="http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml"?-->
+
+      <!-- <?rfc include="http://xml.resource.org/public/rfc/bibxml3/reference.I-D.hellstrom-textpreview.xml"?> -->
+
+      &RFC2119;
+
+      &RFC3261;
+
+      &RFC3550;
+
+      &RFC4103;
+	    
+      &RFC4353;
+
+      &RFC4575;
+
+      &RFC4579;
+
+      <reference anchor="T.140" target="http://www.itu.int/rec/T-REC-T.140/en">
+        <front>
+          <title>Protocol for multimedia application text conversation</title>
+
+          <author surname="ITU-T">
+            <organization></organization>
+          </author>
+
+          <date year="1998" />
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>
