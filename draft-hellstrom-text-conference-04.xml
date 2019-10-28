@@ -38,7 +38,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="bcp" docName="draft-hellstrom-text-conference-04"
+<rfc category="bcp" docName="draft-hellstrom-multi-party-rtt-00"
      ipr="trust200902">
   <!-- category values: std, bcp, info, exp, and historic
      ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
@@ -52,7 +52,7 @@
     <!-- The abbreviated title is used in the page header - it is only necessary if the 
          full title is longer than 39 characters -->
 
-    <title abbrev="Text conference handling">Text media handling in RTP based
+    <title abbrev="Real-time text conference handling">Real-time text media handling in 
     real-time conferences</title>
 
     <!-- add 'role="editor"' below for the editors if appropriate -->
@@ -80,32 +80,6 @@
         <email>gunnar.hellstrom@omnitor.se</email>
 
         <uri>www.omnitor.se</uri>
-
-        <!-- uri and facsimile elements may also be added -->
-      </address>
-    </author>
-
-    <author fullname="Arnoud van Wijk" initials="A.A.T." surname="van Wijk">
-      <organization>Real-Time Text Taskforce (R3TF)</organization>
-
-      <address>
-        <postal>
-          <street></street>
-
-          <!-- Reorder these if your country does things differently -->
-
-          <city></city>
-
-          <code></code>
-
-          <country>US</country>
-        </postal>
-
-        <facsimile></facsimile>
-
-        <email>arnoud@realtimetext.org</email>
-
-        <uri>www.realtimetext.org</uri>
 
         <!-- uri and facsimile elements may also be added -->
       </address>
