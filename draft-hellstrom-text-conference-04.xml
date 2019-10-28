@@ -534,42 +534,55 @@ Capability for the RTT Multi-party capability is then indicated by the media fea
         </list></t>
 <t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
 	<t>When no common method is declared, then only the fallback method can be used.</t>
-	
+	<t>If more than one text media line is included in SDP, all must be capable of using the declared RTT multi-party method.</t>
 	<t>Pros: Provides a clear decision method.</t>
 	<t>Can be extended with new mixing methods.</t>
 	<t>Can guide call routing to a suitable capable focus.</t>
 	
-	<t>Con: If 
+	<t>Con: Requires standardization and IANA registration.</t>
+	<t>Cannot be used in the WebRTC environment.</t>
+		</section>
+	<section title="SDP media attribute for RTT multi-party capability indication"
+		 <t>An attribute can be specified on media level, to be used in text media SDP declarations for negotiating RTT multi-party capabilities.
+The attribute can have the name "rtt-mixer", with one
+ or more of its possible values in a comma-separated list.</t>
+	    <t>The possible values in the list are:</t>
+	     
+      <list style="empty">
+	      <t>rtp-translator</t>
+          <t>rtp-mixer</t>
+
+          <t>t140-mixer</t>
+          <t>rtp-mesh</t>
+	      <t>multi-session</t>
+      
+        </list></t>
+	  <t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	<t>When no common method is declared, then only the fallback method can be used.</t>
+
+<t>Pros: Provides a clear decision method.</t>
+	<t>Can be extended with new mixing methods.</t>
+	  <t>Can be used on specific text media.</t>
+	  <t>Can be used also for SDP-controlled WebRTC sessions with multiple streams in the same data channel.</t>
+	  <t>Cons: Requires standardization and IANA registration.</t>
+	  <t>Is not well defined for multi-party methods involving more than one media section for text.</t>
+	  <t>Cannot guide SIP routing.</t>
+	  </section>
+	
+	
+	<section title=Preferred capability declaration method.>
+<t>The preferred capability declaration method is the one with SDP attributes because it is partially useable also for WebRTC.
+</t>
+	</section>	
+	</section>
+	  
+
+	
 
 	
 	
 	
-	
-        both the focus and the user agent. 
-		
-		by the media tag
-        rtt-mixer=rtp-mix</t>
-      </section>
-    </section>
-
     <section title="Identification of the source of text">
-      <t>The Focus UA co-ordinates the media flow. Real-time text media from
-      different sources are combined in one text media session by the Focus
-      UA. The main principle is that the Focus UA SHOULD act as an RTP Mixer
-      as described in RTP Section 7.1 <xref target="RFC3550"></xref>.</t>
-
-      <t>The RTP text stream from each participant who transmits text is
-      allocated one unique CSRC. The CSRC is used by the receiver to identify
-      text packets originating from one source. Each RTP packet MUST contain
-      text from only one source.</t>
-
-      <t>The redundancy mechanism for increased robustness used by the RFC
-      4103 transport makes use of the RTP sequence number for detection of
-      loss. The RTP Mixer mechanism maintains a separate CSRC for each source
-      RTP stream in the combined RTP session. Therefore the RTP Mixer
-      mechanism can be used for conveying text from multiple sources to one
-      destination, with maintained possibility to detect and recover loss and
-      identify text from the different sources.</t>
 
       <t>As soon as a new member is added to the RTP session, its
       characteristics shall be transmitted in RTCP SDES CNAME and NAME reports
@@ -577,18 +590,18 @@ Capability for the RTT Multi-party capability is then indicated by the media fea
  MUST also be included in the conference data including the text media member in a notification according to RFC 4575.</t>
 
       <t>The RTCP SDES report, SHOULD contain identification of the source
-      represented by the CSRC identifier. This identification MUST contain the
+      represented by the SSRC/CSRC identifier. This identification MUST contain the
       CNAME field and MAY contain the NAME field and other defined fields of
       the SDES report.</t>
 
       <t>A focus UA SHOULD primarily convey SDES information received from the
       sources of the session members. When such information is not available,
-      the focus UA SHOULD compose CSRC, CNAME and NAME information from
+      the focus UA SHOULD compose SSRC/CSRC, CNAME and NAME information from
       available information from the SIP session with the participant.</t>
     </section>
 
     <section title="Presentation of multi-party text">
-      <t>All session participants MUST observe the CSRC field of incoming text
+      <t>All session participants MUST observe the SSRC/CSRC field of incoming text
       RTP packets, and make note of what source they came from in order to be
       able to present text in a way that makes it easy to read text from each
       participant in a session, and get information about the source of the
@@ -623,14 +636,18 @@ Capability for the RTT Multi-party capability is then indicated by the media fea
 
 
     <section anchor="IANA" title="IANA Considerations">
+	    <t>    TBD after decision of proposed preferences in the draft.</t>
+	    <t> TBD EXAMPLE to be adjusted after decision.</t>
       <t>This document Introduces the SIP media tag rtt-mixer, with a
       comma-separated parameter list containing the following possible
       values:<list style="empty">
-          <t>rtp-mixer</t>
+	      <t>rtp-translator</t>
+	      <t>rtp-mixer</t>
 
           <t>t140-mixer</t>
-
+	      <t>rtp-mesh</t>
           <t>text-mixer</t>
+	      <t>multi-session</t>
         </list></t>
 
       <t>rtp-mixer indicates capability for using the RTP-mixer based
@@ -656,9 +673,12 @@ Capability for the RTT Multi-party capability is then indicated by the media fea
       <t>In situations of risk for congestion, the Focus UA MAY combine
       packets from the same source to increase the transmission interval per
       source up to one second. Local conference policy in the Focus UA may be
-      used to decide on which streams shall be selected for such transmission
+      used to decide which streams shall be selected for such transmission
       frequency reduction.</t>
     </section>
+<section title="Acknowledgements">
+	<t>Arnoud van Wijk for contributions to an earlier, expired draft of this memo.</t>
+</section>
   </middle>
 
   <!--  *****BACK MATTER ***** -->
