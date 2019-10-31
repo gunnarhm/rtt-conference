@@ -40,7 +40,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="bcp" docName="draft-hellstrom-multi-party-rtt-00"
+<rfc category="bcp" docName="draft-hellstrom-mmusic-multi-party-rtt"
      ipr="trust200902">
   <!-- category values: std, bcp, info, exp, and historic
      ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
@@ -245,6 +245,8 @@
       <section title="Coordination of text RTP streams">
         <t>Coordinating and sending text RTP streams in the multi-party session can be done in a number of ways. 
 	The most suitable methods are specified here with pros and cons.</t>
+	              <t> A receiving UA SHOULD separate text from the different sources and
+        identify and display them accordingly.</t>
 	
 	<section title="RTP Translator sending one RTT stream per participant,">		
 	<t>Within the RTP session, text from each participant is transmitted from the
@@ -253,7 +255,10 @@
         described in Section 7.1 and 7.2 of RTP <xref target="RFC3550">RFC
         3550</xref> about the Translator function. The sources of the text
         in each RTP packet are identified by the SSRC parameters in the RTP packets, containing the
-        SSRC of the initial sources of text. This method is described in RFC 7667, 
+		SSRC of the initial sources of text.</t> 
+        <t> A receiving UA is supposed to separate text items from the different sources and
+        identify and display them in a suitable way.</t>
+		t>This method is described in RFC 7667, 
         section 3.5.1 Relay-transport translator or 3.5.2 Media translator.</t>
 	
 		
@@ -291,6 +296,9 @@ RFC 3264 specifies in many places that one media description is supposed to desc
 								      
         <t>The identification of the source is made through the RTCP SDES
         CNAME and NAME packets as described in RTP<xref target="RFC3550"></xref>.</t>
+		
+        <t> A receiving UA is supposed to separate text items from the different sources and
+        identify and display them accordingly.</t>
     <t>It is likely that the conference server need to have authority to decrypt the payload in the RTP packets in order to be able to recover text from redundant data or insert the missing text marker in the stream, and repack the text in new packets. Further study is needed</t>
 	<t>Pros:</t>
 <t>	This method has moderate overhead. </t>
@@ -325,7 +333,7 @@ RFC 3264 specifies in many places that one media description is supposed to desc
         <t>The receiver can use the string for presenting the source of text. This method is
         on the RTP level described in RFC 7667, section 3.6.2 Media mixing mixer.</t> 
         <t>The inline coding of the source of text is applied in the data stream itself, and an
-        RTP mixer function normally without CSRC identification used for
+        RTP mixer function is used for
         coordinating the sources of text into one RTP stream.</t>
 
 
@@ -338,7 +346,7 @@ RFC 3264 specifies in many places that one media description is supposed to desc
         the source. This parameter shall be kept short
         so that it can be repeated in the transmission without concerns for
         network load.</t>
-        <t> A receiving UA SHOULD separate text from the different sources and
+        <t> A receiving UA is supposed to separate text items from the different sources and
         identify and display them accordingly.</t>
        <t>The conference server need to be allowed to decrypt/encrypt the packet payload in order to check the source and repack the text.</t> 
 	<t>Pros:  </t>
@@ -465,6 +473,8 @@ multi-party RTT in WebRTC is for the bridge combine text from all sources into o
 		
 <t>The identification of the source is made through insertion in the beginning of each text transmission 
 from a source of a control code extension "c" followed by a string representing the source, framed by the control code start and end flags SOS and ST (See <xref target="T.140">ITU-T T.140</xref>).</t>
+	<t> A receiving UA is supposed to separate text items from the different sources and
+        identify and display them in a suitable way.</t>
 <t>The UA does not always display the source identification in the received text at the place where it is received, but has the information as a guide for planning the presentation of received text. A label corresponding to the source identification is presented when needed depending on the selected presentation style.</t> 
 
 <t>Pros:</t>
@@ -478,13 +488,26 @@ from a source of a control code extension "c" followed by a string representing 
 </section>	
 <section title="Preferred multi-party RTT transport method">
 <t>EDITOR NOTE: The recommendations here need to be validated, and the proposed further studies performed.</t>
-<t>For RTP transport of RTT, two methods for multi-party mixing and transport for conference-aware parties stand out as fulfilling the goals best: "RTP Mixer indicating participants in CSRC" and "RTP Mixer indicating participants by a control code in the stream". The CSRC based method has a slightly better opportunity to use a robust and well defined procedure in the server. The inline stream based method has the slightly better opportunity for ease of interworking with other environments for RTT where the in-line identification also could be used. The robustness is important, and therefore the method to implement for multi-party RTT with conference-aware parties when no other method is explicitly agreed between implementing parties for SIP with RTP is "RTP Mixer indicating participants in CSRC".</t> 
-<t>Further studies should be made to find out if assessment of the source for lost text can be better done, and if operation without letting the conference server decrypt data can be specified.</t>
+<t>For RTP transport of RTT, two methods for multi-party mixing and transport for conference-aware parties 
+stand out as fulfilling the goals best: "RTP Mixer indicating participants in CSRC" and
+ "RTP Mixer indicating participants by a control code in the stream". 
+The CSRC based method has a slightly better opportunity to use a robust and well defined 
+procedure in the server. The inline stream based method has the slightly better opportunity
+ for ease of interworking with other environments for RTT where the in-line identification 
+also could be used. The robustness is important, and therefore the method to implement for 
+multi-party RTT with conference-aware parties when no other method is explicitly agreed 
+between implementing parties for SIP with RTP is "RTP Mixer indicating participants in CSRC".</t> 
+<t>Further studies should be made to find out if assessment of the source for lost text can be be
+tter done, and if operation without letting the conference server decrypt data can be specified.</t>
 <t></t>
-<t>For WebRTC, one method is to prefer because it seems to allow the conference server to act on the text without decrypting it. So, for WebRTC, the method to implement for multi-party RTT with conference-aware parties when no other method is explicitly agreed between 
+<t>For WebRTC, one method is to prefer because it seems to allow the conference server to act on the 
+text without decrypting it. So, for WebRTC, the method to implement for multi-party RTT with 
+conference-aware parties when no other method is explicitly agreed between 
 implementing parties is: "RTT bridging in the WebRTC environment with one data channel per source".</t>
 <t>Further studies are needed to check the encryption statement above.</t>
-<t>As a last resort, when the UA is not conference-aware, the method for mixing for conference-unaware user agents may be used for both RTP and WebRTC data channel solutions considering that this method provides a reduced impression of the real time characteristics and may delay presentation of text.</t>  			
+<t>As a last resort, when the UA is not conference-aware, the method for mixing for conference-unaware 
+user agents may be used for both RTP and WebRTC data channel solutions considering that this method 
+provides a reduced impression of the real time characteristics and may delay presentation of text.</t>  			
 </section>
 
 <section title="Session control of multi-party RTT sessions">
@@ -501,13 +524,18 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
         been completed and a supported method for multi-party real-time text transmission can be identified.</t>
 	
 	<t>A method for detection of conference-awareness for centralized SIP conferencing in general is
-	specified in <xref target="RFC4579">RFC 4579</xref>. The focus sends the "isfocus" feature tag in a SIP Contact header. This causes 
+	specified in <xref target="RFC4579">RFC 4579</xref>. The focus sends the "isfocus" feature tag in a 
+        SIP Contact header. This causes 
 	the conference-aware UA to subscribe to conference notifications from the focus. The focus then sends 
 	notifications to the UA about entering and disappearing conference participants and their media capabilities.
-	The information is carried XML-formatted in a 'conference-info' block in the notification according to RFC 4575. The mechanism is described in detail in <xref target="RFC4575">RFC 4575</xref>. </t>
+	The information is carried XML-formatted in a 'conference-info' block in the notification according to RFC 4575.
+        The mechanism is described in detail in <xref target="RFC4575">RFC 4575</xref>. </t>
 	
 	<t>Before a conference media server starts sending multi-party RTT to a UA, a verification of its ability
-	to handle multi-party RTT must be made. A decision on which mechanism to use for identifying text from the different participants must also be taken, implicitly or explicitly. These verifications and decisions can be done in a number of ways. The most apparent ways are specified here and their pros and cons described. One of the methods is selected to be the 
+	to handle multi-party RTT must be made. A decision on which mechanism to use for identifying text from the 
+        different participants must also be taken, implicitly or explicitly. These verifications and decisions can 
+        be done in a number of ways. The most apparent ways are specified here and their pros and cons described. 
+        One of the methods is selected to be the 
 	one to be used by implementations according to this specification.</t>
 	
 	<section title="Implicit RTT multi-party capability indication">
@@ -536,11 +564,13 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	Then the method called "Mixing for conference-unaware user agents" should be used as a lower functionality fallback.
 	There is no way to provide that indication by the UA according to the specification of the implicit method above. 
 	The solution must be that no conference awareness is indicated by the UA when it has no RTT multi-party capability.</t>
-	<t>If other methods for multi-party RTT are to be used in the same implementation environment as the preferred ones,then capability exchange needs to be defined for them. </t>
+	<t>If other methods for multi-party RTT are to be used in the same implementation environment
+        as the preferred ones,then capability exchange needs to be defined for them. </t>
 	</section>
 
-<section title="RTT multi-party capability declared by SIP media-tags">
-	<t>Specifications for RTT multi-party capability declarations can be agreed for use as SIP media feature tags, to be exchanged during SIP call control operation according to the mechanisms in RFC 3840 and RFC 3841.
+     <section title="RTT multi-party capability declared by SIP media-tags">
+	<t>Specifications for RTT multi-party capability declarations can be agreed for use as SIP media feature tags,
+        to be exchanged during SIP call control operation according to the mechanisms in RFC 3840 and RFC 3841.
 	Capability for the RTT Multi-party capability is then indicated by the media feature tag "rtt-mixer", with one
  	or more of its possible values in a comma-separated list.</t>
 	<t>The possible values in the list are:</t>
@@ -569,9 +599,11 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	  <t>multi-session indicates capability for using separate point-to-point
 	  RTP sessions between all participants.</t>
 <t></t>
-	<t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	<t>An offer-answer exchange should take place and the common method selected by the
+         answering party shall be used in the session with that UA.</t>
 	<t>When no common method is declared, then only the fallback method can be used.</t>
-	<t>If more than one text media line is included in SDP, all must be capable of using the declared RTT multi-party method.</t>
+	<t>If more than one text media line is included in SDP, all must be capable of using 
+        the declared RTT multi-party method.</t>
 	<t>Pros:</t>
 	<t> Provides a clear decision method.</t>
 	<t>Can be extended with new mixing methods.</t>
@@ -612,7 +644,8 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	  <t>multi-session indicates capability for using separate point-to-point
 	  RTP sessions between all participants.</t>
 <t></t>
-	  <t>An offer-answer exchange should take place and the common method selected by the answering party shall be used in the session with that UA.</t>
+	  <t>An offer-answer exchange should take place and the common method selected by the 
+          answering party shall be used in the session with that UA.</t>
 	  <t>When no common method is declared, then only the fallback method can be used.</t>
 
 	<t>Pros:</t>
@@ -628,7 +661,8 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	
 	
 	<section title="Preferred capability declaration method.">
-	<t>The preferred capability declaration method is the one with SDP attributes because it is partially usable also for WebRTC.
+	<t>The preferred capability declaration method is the one with SDP attributes because it is partially 
+	usable also for WebRTC.
 	</t>
 	</section>		  
 </section>
@@ -639,7 +673,9 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	
 	
     <section title="Identification of the source of text">
-	<t>EDITOR NOTE: The text in the following sections need to be adapted after recommendations for the main methods for coordination of RTT has been selected. Details should be provided mainly for the recommended method.</t>
+	<t>EDITOR NOTE: The text in the following sections need to be adapted after
+	recommendations for the main methods for coordination of RTT has been selected. 
+		Details should be provided mainly for the recommended method.</t>
 	
 
       <t>As soon as a new member is added to the RTP session, its
@@ -682,7 +718,27 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
         suitable form for the available display.</t>
       </section>
 	  <section title="Presentation details for multi-party aware UAs.">
-	  <t>TBD</t>
+	  <t>The multi-party aware UA should after any action for recovery of 
+		  lost packets, separate the incoming streams and present them according 
+		  to the style that the receiving application supports and the user has selected.
+		  One often used style is to present real-time text in chunks in readable bubbles 
+		  identified by labels containing names of sources. Bubbles are placed in one column in the presentation area
+		  and are closed and moved upwards in the presentation area after certain items or 
+		  events, when there is also newer text from another source that would go into a new bubble. 
+                  The text items that allows bubble closing are any character closing a phrase or sentence 
+		  followed by a space or a timeout of a suitable time (about 10 seconds).</t>
+	
+		  Erasures require special consideration. Erasure within a bubble is straightforward. 
+		  But if erasure from one participant affects the last character before a bubble, the 
+		  whole previous bubble becomes the actual bubble for real-time action by that participant 
+		  and is placed below all other bubbles in the presentation area. If the border between bubbles 
+		  was caused by the CRLF characters, only one erasure action is required to erase this bubble border. 
+		  When a bubble is closed, it is moved up, above all real-time active bubbles.
+		  
+		  Real-time active text from the local user should be presented in a separate area. When a reason 
+		  to close a bubble from the local user, the bubble is placed above all real-time active bubbles, 
+		  so that the time order that real-time text entries were completed is visible.</t>  
+		  
 	  </section>
 	  <section title="Presentation details for multi-party unaware UAs.">
 	  <t>TBD</t>
@@ -815,25 +871,54 @@ implementing parties is: "RTT bridging in the WebRTC environment with one data c
 	  &RFC7667;	
 	</references>
 	    <section anchor="app-unaware" title="Mixing for a conference-unaware UA">
-      <t>This informational appendix describes media mixer procedures for a multi-party conference server to format real-time text from a number of participants into one single text stream to a participant with a terminal that has no features for multi-party text display. The procedures are intended for implementations using ITU-T T.140 [T.140] for the real-time text coding and presentation.</t>
+      <t>This informational appendix describes media mixer procedures for a multi-party 
+	      conference server to format real-time text from a number of participants 
+	      into one single text stream to a participant with a terminal that has no 
+	      features for multi-party text display. The procedures are intended for 
+	      implementations using ITU-T T.140 [T.140] for the real-time text coding 
+	      and presentation.</t>
 <section title="Short description">
-<t>The media mixer procedures described here are intended to make real-time text from a number of call participants be coordinated into one text stream to a terminal originally intended for two-party calls.
+<t>The media mixer procedures described here are intended to make real-time text from a 
+	number of call participants be coordinated into one text stream to a terminal 
+	originally intended for two-party calls.
 A conference server is supposed to apply the procedures.</t>
 
-<t>The procedures may also be applied on a terminal for display of multiple streams of real-time text in one area.</t>
+<t>The procedures may also be applied on a terminal for display of multiple streams of 
+	real-time text in one area.</t>
 
-<t>The intention is that text from each participant shall be displayed in suitable sections so that it is easy to read, and text from one active participant at a time is sent and displayed in real-time.
+<t>The intention is that text from each participant shall be displayed in suitable sections 
+	so that it is easy to read, and text from one active participant at a time is sent 
+	and displayed in real-time.
 The receiving terminal is assumed to have one display area for received text.
-The display is arranged by this procedure in a text chat style, with a name label in front of each text section where switch of source of the text has taken place.</t>
+The display is arranged by this procedure in a text chat style, with a name label in front 
+	of each text section where switch of source of the text has taken place.</t>
 
-<t>When more than one participant transmits text at the same time, the text from only one of them is transmitted directly to the receiving terminals. Text from the other participants is stored in buffers in the conference server for transmission at a later time, when a suitable situation for switch of current transmitter can take place.</t>
+<t>When more than one participant transmits text at the same time, the text from only one 
+	of them is transmitted directly to the receiving terminals. Text from the other 
+	participants is stored in buffers in the conference server for transmission at a 
+	later time, when a suitable situation for switch of current transmitter can take place.</t>
 </section>
 <section title="Functionality goals and drawbacks">
-<t>The procedures are intended to make best efforts to present a multi-party text conversation on a terminal that has no awareness of multi-party calls. There are some obvious drawbacks, and a terminal designed with multi-party awareness will be able to present multi-party call contents  in a more flexible way. Only two parties at a time will be allowed to display added text in real-time, while the other parties? produced text will need to be stored in the multi-party server for a moment awaiting a suitable occasion to be displayed. There are also some cases of erasure that will not be performed on the target text but only indicated in another way. Even with these drawbacks, the procedure provides an opportunity to display text from more than two parties in a smooth and readable way.</t> 
+<t>The procedures are intended to make best efforts to present a multi-party text 
+	conversation on a terminal that has no awareness of multi-party calls.
+	There are some obvious drawbacks, and a terminal designed with multi-party awareness 
+	will be able to present multi-party call contents  in a more flexible way. Only 
+	two parties at a time will be allowed to display added text in real-time, while 
+	the other parties? produced text will need to be stored in the multi-party server
+	for a moment awaiting a suitable occasion to be displayed. There are also some 
+	cases of erasure that will not be performed on the target text but only indicated 
+	in another way. Even with these drawbacks, the procedure provides an opportunity to 
+	display text from more than two parties in a smooth and readable way.</t> 
 
-<t>This specification does not introduce any new protocol element, and does not rely on anything else than basic two-party terminal functionality with presentation level according to ITU-T T.140 [T.140]. It is a description of a best current practice for mixing and presentation of the real-time text component in multi-party calls with terminals without multi-party awareness.</t>
+<t>This specification does not introduce any new protocol element, and does not 
+	rely on anything else than basic two-party terminal functionality with presentation 
+	level according to ITU-T T.140 [T.140]. It is a description of a best current practice 
+	for mixing and presentation of the real-time text component in multi-party calls with
+	terminals without multi-party awareness.</t>
 
-<t>The procedures are applicable to scenarios, when the conference focus and a User Agent have not gone through any successfully completed negotiation about conference awareness for the real-time text medium neither on the transport level, nor on the presentation level.</t>
+<t>The procedures are applicable to scenarios, when the conference focus and a User Agent have 
+	not gone through any successfully completed negotiation about conference awareness for 
+	the real-time text medium neither on the transport level, nor on the presentation level.</t>
 </section>
 <section title="Definitions">
 <t>
@@ -870,16 +955,26 @@ The display is arranged by this procedure in a text chat style, with a name labe
 </section>
 <section title="Presentation level procedures">
 
-<t>The conference server applies these mixing procedures to text transmitted to all call participants who have not gone through a completed negotiation for conference awareness in real-time text presentation.</t>
+<t>The conference server applies these mixing procedures to text transmitted to all 
+	call participants who have not gone through a completed negotiation for 
+	conference awareness in real-time text presentation.</t>
 
-<t>All the participants and the conference server use real-time text conversation presentation coding according to ITU-T T.140 [T.140]. A consequence is that real-time text transmissions are UTF-8 coded, with control codes selected from ISO 6429 [ISO 6429].</t>
+<t>All the participants and the conference server use real-time text conversation 
+	presentation coding according to ITU-T T.140 [T.140]. A consequence is that
+	real-time text transmissions are UTF-8 coded, with control codes selected 
+	from ISO 6429 [ISO 6429].</t>
 
 
 <t>The description is from the conference server point of view.</t>
 <section title="Structure">
-<t>The real-time text mixer structure described here is supposed to be placed in the media path so that it is implemented with one mixer per recipient. A mixer contains buffers for temporary storage of text intended for the recipient. Each mixer has one buffer for each contributing participant. A set of status variables is maintained per buffer and is used in the mixer actions. The mixer logic decides for each moment which participant?s buffer content is to be sent on to the recipient. By default, the recipient does not contribute text to its own mixer. Text transmitted by a participant is usually displayed locally and will only cause confusion if it appears also in received text.</t> 
+<t>The real-time text mixer structure described here is supposed to be placed in the 
+	media path so that it is implemented with one mixer per recipient. A mixer 
+	contains buffers for temporary storage of text intended for the recipient. Each mixer has one buffer for each contributing participant. A set of status variables is maintained per buffer and is used in the mixer actions. The mixer logic decides for each moment which participant?s buffer content is to be sent on to the recipient. By default, the recipient does not contribute text to its own mixer. Text transmitted by a participant is usually displayed locally and will only cause confusion if it appears also in received text.</t> 
 
-<t>If there is a reason, own text can be configured to be transmitted also to the participants. That can enable a simplification of the mixer design to have only one common set of buffers instead of a set per recipient. That simplification will however hamper the flow of the conversation severely and is therefore NOT RECOMMENDED.</t> 
+<t>If there is a reason, own text can be configured to be transmitted also to the 
+	participants. That can enable a simplification of the mixer design to have
+	only one common set of buffers instead of a set per recipient. That simplification 
+	will however hamper the flow of the conversation severely and is therefore NOT RECOMMENDED.</t> 
 </section>
 
 
@@ -895,11 +990,14 @@ This description of the mixer is valid per recipient.</t>
 <t>Insert in buffer: Resulting text is put into the contributing participant?s buffer in the receiving participant?s mixer.</t> 
 
 
-<t>Maintain a display counter: For each text character that will take a position on the receiving display, a Display Counter for each participant is increased by one.</t>
+<t>Maintain a display counter: For each text character that will take a position on the 
+	receiving display, a Display Counter for each participant is increased by one.</t>
 
-<t>There is one T.140 real-time text item that consists of two characters, but is regarded to be a unit and therefore increase the Display Counter with one only.That is CRLF.</t>
+<t>There is one T.140 real-time text item that consists of two characters, but is regarded 
+	to be a unit and therefore increase the Display Counter with one only.That is CRLF.</t>
             
-<t>Furthermore, the following control codes are regarded units that shall not take any position on the receiving display and shall therefore not increase the Display Counter:</t>
+<t>Furthermore, the following control codes are regarded units that shall not take any position
+	on the receiving display and shall therefore not increase the Display Counter:</t>
 <t>0098 string 009C 	(SOS-ST strings)</t>
 <t>ESC 0061		(INT)</t>
 <t>009B Ps 006D  	(the SGR code, with special handling described below)</t>
@@ -907,15 +1005,29 @@ This description of the mixer is valid per recipient.</t>
 
 <t>See the section on control codes below for details.</t>
 
-<t>Combination characters: Also note that it is possible to use combination characters in Unicode. Such combination characters contain more than one character part. They shall only increase the Display Counter with one. The combination characters mainly have components in the series 0300 ? 0361 and 20D0 ? 20E1.</t> 
+<t>Combination characters: Also note that it is possible to use combination 
+	characters in Unicode. Such combination characters contain more than one character part. 
+	They shall only increase the Display Counter with one. The combination characters mainly 
+	have components in the series 0300 ? 0361 and 20D0 ? 20E1.</t> 
 
-<t>Erasure: If the control code for erasure, BS, is received, the following shall be done: If the Display Counter is 0, an Erasure Replacement character, by default being ?X? is inserted in the buffer instead of the erasure, to mark that erasure was intended in earlier transmitted entries. ( this matches traditional habits in real-time text when participants sometimes type XXX to indicate erasure they do not bother to make explicit). If the Display Counter is >0, then the counter is reduced by one, and the erasure control code BS put into the buffer.</t>
+<t>Erasure: If the control code for erasure, BS, is received, the following shall be done: If the 
+	Display Counter is 0, an Erasure Replacement character, by default being ?X? is inserted in 
+	the buffer instead of the erasure, to mark that erasure was intended in earlier transmitted entries. 
+	( this matches traditional habits in real-time text when participants sometimes type XXX to indicate 
+	erasure they do not bother to make explicit). If the Display Counter is >0, then the counter is 
+	reduced by one, and the erasure control code BS put into the buffer.</t>
 
-<t>Initial action in the session: BOM shall be sent initially to the recipients in the beginning of the session.</t> 
-<t>Maintaining a waiting time per participant: The time that text has been in the buffer is maintained as the waiting time for each buffer. A granularity of 0.3 seconds is sufficient.</t> 
-<t>Storing time of reception for each character: Each character that is stored in a buffer shall be assigned with a time stamp indicating its time of reception. A granularity of 0.3 seconds is sufficient. This time stamp is used for calculation of idle time and waiting time in the evaluation of switch reasons.</t> 
-<t>Initial assignment of the Current Participant: The first contributing participant to send text in the session is assigned to be the Current Participant.</t> 
-<t>Actions on assignment of a Current Participant: When a participant becomes the Current Participant, the following initial actions shall be performed:</t>
+<t>Initial action in the session: BOM shall be sent initially to the recipients in the beginning of the 
+	session.</t> 
+<t>Maintaining a waiting time per participant: The time that text has been in the buffer is maintained as the 
+	waiting time for each buffer. A granularity of 0.3 seconds is sufficient.</t> 
+<t>Storing time of reception for each character: Each character that is stored in a buffer shall be assigned 
+	with a time stamp indicating its time of reception. A granularity of 0.3 seconds is sufficient. This 
+	time stamp is used for calculation of idle time and waiting time in the evaluation of switch reasons.</t> 
+<t>Initial assignment of the Current Participant: The first contributing participant to send text in the session 
+	is assigned to be the Current Participant.</t> 
+<t>Actions on assignment of a Current Participant: When a participant becomes the Current Participant, the following 
+	initial actions shall be performed:</t>
 
 <t>1. Scanning transmissions and timers for a Switch Reason is inactivated.</t>
 <t>2. The Current Recipients are set so that all transmissions go to the new set of Current Recipients (See definition).</t>
@@ -923,16 +1035,30 @@ This description of the mixer is valid per recipient.</t>
 <t>4. The Label is transmitted</t>
 <t>5. Any stored SGR code is transmitted</t>
 <t>6. Scanning transmissions and timers for a Switch Reason is activated.</t>
-<t>7. Text in the buffer is transmitted, recalculating and setting the waiting time for each transmitted character based on the time of reception of next character in the buffer.  
-If a switch occurs during transmission from the buffer, the remaining buffer contents is maintained and transmission can continue next time this transmitter becomes the current participant. Any text entered into the buffer for the current participant is after that sent to the recipient until a Switch Reason occurs.</t> 
-<t>Actions on transmission and during the session: Transmissions are checked for control codes to act on at transmission as described below in the section about handling of control codes and such actions are performed. 
+<t>7. Text in the buffer is transmitted, recalculating and setting the waiting time 
+	for each transmitted character based on the time of reception of next character
+	in the buffer.  
+If a switch occurs during transmission from the buffer, the remaining buffer contents is 
+	maintained and transmission can continue next time this transmitter becomes the 
+	current participant. Any text entered into the buffer for the current participant is after that sent to the recipient until a Switch Reason occurs.</t> 
+<t>Actions on transmission and during the session: Transmissions are checked for control
+	codes to act on at transmission as described below in the section about handling
+	of control codes and such actions are performed. 
 
-When the scanning of transmission and timers for a Switch Reason is active, the timers and the transmission to the recipient is analyzed for detection if a Switch Reason has occurred. See the definition of Switch Reasons for details.</t>
-<t>Actions when a Switch Reason has occurred: If a Switch Reason has occurred, then the following actions shall be performed:</t>
+When the scanning of transmission and timers for a Switch Reason is active, the timers and 
+	the transmission to the recipient is analyzed for detection if a Switch Reason has 
+	occurred. See the definition of Switch Reasons for details.</t>
+<t>Actions when a Switch Reason has occurred: If a Switch Reason has occurred, then the 
+	following actions shall be performed:</t>
 <t>1. The Display Counter of the Current Participant is set to zero</t>
-<t>2. If there is an SGR code stored for the Current Participant, a reset of SGR shall be sent by the sequence SGR 0 [009B 0000 006D].</t>
-<t>3. A participant with the longest waiting time is assigned to be the Current Participant, and the procedure for assignment of a Current Participant described above is performed.</t>
-<t>Handling of Control codes: The following control codes are specified by ITU-T T.140. Some of them require consideration in the conference server. Note that the codes presented here are expressed in UCS-16, while transmission is made in UTF-8 transform of these codes. Other sections specify procedures for handling of specific control codes in the conference server.</t>
+<t>2. If there is an SGR code stored for the Current Participant, a reset of SGR shall 
+	be sent by the sequence SGR 0 [009B 0000 006D].</t>
+<t>3. A participant with the longest waiting time is assigned to be the Current Participant, 
+	and the procedure for assignment of a Current Participant described above is performed.</t>
+<t>Handling of Control codes: The following control codes are specified by ITU-T T.140. Some of 
+	them require consideration in the conference server. Note that the codes presented here are
+	expressed in UCS-16, while transmission is made in UTF-8 transform of these codes. Other 
+	sections specify procedures for handling of specific control codes in the conference server.</t>
 
 
 <t>BEL		    0007	     Bell, provides for alerting during an active session.</t>
@@ -950,9 +1076,14 @@ When the scanning of transmission and timers for a Switch Reason is active, the 
 
 
 <t>Code for message border, useful, but not mentioned in T.140: New Message	2029 Paragraph separator</t>
-<t>Handling of Graphic Rendition SGR: The following procedure shall be followed in order to let the participants control the graphic rendition of their entries without disturbing other participants? graphic rendition.
+<t>Handling of Graphic Rendition SGR: The following procedure shall be followed 
+	in order to let the participants control the graphic rendition of their 
+	entries without disturbing other participants? graphic rendition.
 
-The text stream sent to a recipient shall be monitored for the SGR sequence. The latest conveyed SGR sequence is also stored as a status variable for the recipient. If the SGR 0 code initiated from the current participant is transmitted, the SGR storage shall be cleared.</t>
+The text stream sent to a recipient shall be monitored for the SGR sequence.
+	The latest conveyed SGR sequence is also stored as a status variable 
+	for the recipient. If the SGR 0 code initiated from the current participant 
+	is transmitted, the SGR storage shall be cleared.</t>
 </list>
 </t>
 </section>
@@ -1010,11 +1141,16 @@ The text stream sent to a recipient shall be monitored for the SGR sequence. The
              | of course, I underst                           |
              |________________________________________________|
  ]]></artwork>
- <postamble>Figure 3 shows a conference view with real-time text preview. Bob?s text is buffering until a Current switch reason.</postamble>
+ <postamble>Figure 3 shows a conference view with real-time text preview.
+	 Bob?s text is buffering until a Current switch reason.</postamble>
  </figure>
 </section>
 <section title="Summary of configurable parameters">
-<t>A number of configurable parameters are described in this specification. This table provides a summary of the parameters on presentation level. A service provider implementing a multi-party service may want to set specific values on these parameters to adapt the characteristics of the service. It is possible to control them per recipient, if desired.</t>
+<t>A number of configurable parameters are described in this specification.
+	This table provides a summary of the parameters on presentation level.
+	A service provider implementing a multi-party service may want to set 
+	specific values on these parameters to adapt the characteristics of the service. 
+	It is possible to control them per recipient, if desired.</t>
 <t></t>
 <t>Parameter: Current Recipients </t>
 <t>Purpose: Control if participant shall get their own text.  </t>    
@@ -1038,13 +1174,15 @@ The text stream sent to a recipient shall be monitored for the SGR sequence. The
 <t>Purpose: Inactivity timer for detection of time to Switch Current Participant</t>     
 <t>Possible values: Time in seconds</t>                    
 <t>Default value: 7</t>         
-<t>Comment: Longer times may cause inefficient transmission. Shorter time may cause unwanted switching cutting lines of thought inconveniently</t>
+<t>Comment: Longer times may cause inefficient transmission. Shorter time may cause
+	unwanted switching cutting lines of thought inconveniently</t>
 <t></t>
 <t>Parameter: Sentence delimiter</t>
 <t>Purpose: Characters forming end of sentence</t>     
 <t>Possible values: List of delimiters.</t>      
 <t>Default value: . or ? or ! followed by a space</t>        
-<t>Comment: Used for deciding on a position in the text to switch Current Participant according to configured logic.</t>
+<t>Comment: Used for deciding on a position in the text to switch Current 
+	Participant according to configured logic.</t>
 <t></t>
 <t>Parameter: Label length</t>
 <t>Purpose: Length of label put in front of or above entry.</t>      
@@ -1095,7 +1233,10 @@ The text stream sent to a recipient shall be monitored for the SGR sequence. The
 </t>
 </section>
 <section title="Acknowledgement">
-<t>This appendix was developed with funding in part from the National Institute on Disability and Rehabilitation Research, U.S. Department of Education,RERC on Telecommunications Access,?grant # H133E090001?. However, the contents do not necessarily represent the policy of the Department of Education, and you should not assume endorsement by the Federal Government.</t>
+<t>This appendix was developed with funding in part from the National Institute on Disability and 
+	Rehabilitation Research, U.S. Department of Education,RERC on Telecommunications Access,?grant 
+	# H133E090001?. However, the contents do not necessarily represent the policy of the Department of 
+	Education, and you should not assume endorsement by the Federal Government.</t>
 </section>
 </section>
 
