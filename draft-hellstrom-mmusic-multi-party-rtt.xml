@@ -825,7 +825,20 @@ in the column header. The considerations for ending and moving and erasure of en
 	  RTP sessions between all participants.</t>
 	  
     </section>
-
+    <section title="Robustness and indication of possible loss">
+	    <t>This section discusses the means for robustness against loss of text 
+		    that is already specified and their performance in the multi-party situation.
+		    means for reducing the risk for loss is discussed, as well as ways to detect 
+		    in which stream loss has occurred.</t>
+	    <t>TBD</t>.
+		  </section>     
+     <section title="Performance">
+	     <t>This section discusses performance and performance limitations for the different 
+		     transport solutions, and indicates which means for performance increase versus 
+		     load limitations can be suitable to apply compared to the point-to-point case.</t> 
+	     <t>TBD</t>
+		  </section>
+		  
     <section anchor="Security" title="Security Considerations">
       <t>The security considerations valid for RFC 4103 and RFC 3550 are valid
       also for the multi-party sessions with text.</t>
