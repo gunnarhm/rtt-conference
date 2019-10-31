@@ -1,0 +1,11 @@
+Issues and tasks for progress of draft-hellstrom-multi-party-rtt
+
+2019-10-31 Make the T.140 control code method independent of conference-awareness. Just require capability negotiation.
+
+2019-10-31 Align with modern xml2rfc standards.
+
+2019-10-31 Replace ? with proper letters in Appendix A.
+
+2019-10-31 Clean up references.
+
+2019-10-31 Add details on erasure.
