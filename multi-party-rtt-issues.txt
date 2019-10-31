@@ -9,3 +9,9 @@ Issues and tasks for progress of draft-hellstrom-multi-party-rtt
 2019-10-31 Clean up references.
 
 2019-10-31 Add details on erasure.
+
+2019-10-31 From Christer H: In Section 4.3 you say:
+
+   "A receiving UA SHOULD separate text from the different sources and identify and display them accordingly."
+
+Doesn't this requirement apply to all mechanisms?
