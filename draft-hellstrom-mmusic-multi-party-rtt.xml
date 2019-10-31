@@ -248,7 +248,7 @@
 	              <t> A receiving UA SHOULD separate text from the different sources and
         identify and display them accordingly.</t>
 	
-	<section title="RTP Translator sending one RTT stream per participant,">		
+	<section title="RTP Translator sending one RTT stream per participant">		
 	<t>Within the RTP session, text from each participant is transmitted from the
         RTP media translator in a separate RTP stream, thus using the same
         destination address/port combination, but separate RTP SSRC parameters and sequence number series as
@@ -258,7 +258,7 @@
 		SSRC of the initial sources of text.</t> 
         <t> A receiving UA is supposed to separate text items from the different sources and
         identify and display them in a suitable way.</t>
-		t>This method is described in RFC 7667, 
+		<t>This method is described in RFC 7667, 
         section 3.5.1 Relay-transport translator or 3.5.2 Media translator.</t>
 	
 		
