@@ -467,7 +467,8 @@ and session information belonging to the source. The UA can compose a readable l
 <section title="RTT bridging in WebRTC with one common data channel">		
 <t>	
 A way to handle
-multi-party RTT in WebRTC is for the bridge combine text from all sources into one data channel and insert the sources in the stream by a T.140 control code for source.</t>
+multi-party RTT in WebRTC is for the bridge combine text from all sources into one data
+	channel and insert the sources in the stream by a T.140 control code for source.</t>
 
 <t>This method is described in a corresponding section for RTP transmission above. </t>	
 		
@@ -494,18 +495,21 @@ stand out as fulfilling the goals best: "RTP Mixer indicating participants in CS
 The CSRC based method has a slightly better opportunity to use a robust and well defined 
 procedure in the server. The inline stream based method has the slightly better opportunity
  for ease of interworking with other environments for RTT where the in-line identification 
-also could be used. The robustness is important, and therefore the method to implement for 
-multi-party RTT with conference-aware parties when no other method is explicitly agreed 
-between implementing parties for SIP with RTP is "RTP Mixer indicating participants in CSRC".</t> 
+also could be used. The inline method can also be applied in the case when an ad-hoc method for 
+	conferencing is used, and the source of text only detectable inline. 
+	The possibility to use such methods for conferencing and the interoperability opportunities 
+	are important, and therefore the method to implement for 
+multi-party RTT with or without conference-aware parties when no other method is explicitly agreed 
+between implementing parties for SIP with RTP is "RTP Mixer indicating participants by a control code in the stream".</t> 
 <t>Further studies should be made to find out if assessment of the source for lost text can be be
 tter done, and if operation without letting the conference server decrypt data can be specified.</t>
 <t></t>
-<t>For WebRTC, one method is to prefer because it seems to allow the conference server to act on the 
-text without decrypting it. So, for WebRTC, the method to implement for multi-party RTT with 
+<t>For WebRTC, one method is to prefer because of the same interoperability reasons, and because of the lower network resource usage. 
+So, for WebRTC, the method to implement for multi-party RTT with 
 conference-aware parties when no other method is explicitly agreed between 
-implementing parties is: "RTT bridging in the WebRTC environment with one data channel per source".</t>
-<t>Further studies are needed to check the encryption statement above.</t>
-<t>As a last resort, when the UA is not conference-aware, the method for mixing for conference-unaware 
+implementing parties is: "RTT bridging in WebRTC with one common data channel".</t>
+<t>Further studies are needed to check if it can be possible to let the conference server act without decrypting the text.</t>
+<t>As a last resort, when the UA is not conference-aware, the method for mixing for multi-party-unaware 
 user agents may be used for both RTP and WebRTC data channel solutions considering that this method 
 provides a reduced impression of the real time characteristics and may delay presentation of text.</t>  			
 </section>
@@ -718,30 +722,62 @@ provides a reduced impression of the real time characteristics and may delay pre
         suitable form for the available display.</t>
       </section>
 	  <section title="Presentation details for multi-party aware UAs.">
-	  <t>The multi-party aware UA should after any action for recovery of 
+	  <t>The multi-party aware UA should after any action for recovery of data from
 		  lost packets, separate the incoming streams and present them according 
-		  to the style that the receiving application supports and the user has selected.
-		  One often used style is to present real-time text in chunks in readable bubbles 
+		  to the style that the receiving application supports and the user has selected. 
+		  The decisions taken for presentation of the multi-party interchange shall be purely 
+		  on the receiving side. The sending application must not insert any item in the stream 
+		  to influence presentation that is not requested by the sending participant.</t>
+		  
+		  <section title="Bubble style presentation">
+		  <t>One often used style is to present real-time text in chunks in readable bubbles 
 		  identified by labels containing names of sources. Bubbles are placed in one column in the presentation area
 		  and are closed and moved upwards in the presentation area after certain items or 
 		  events, when there is also newer text from another source that would go into a new bubble. 
                   The text items that allows bubble closing are any character closing a phrase or sentence 
 		  followed by a space or a timeout of a suitable time (about 10 seconds).</t>
+		  
+		  <t>Real-time active text sent from the local user should be presented in a separate area. When there is a reason 
+		  to close a bubble from the local user, the bubble should be placed above all real-time active bubbles, 
+		  so that the time order that real-time text entries were completed is visible.</t>
+			  
+	          <t>Scrolling is usually provided for viewing of recent or older text. When scrolling is done to an
+			  earlier point in the text, the presentation shall not move the scroll position by new received text. 
+			  It must be the decision of the local user to return to automatic viewing of latest text actions. 
+			  It may be useful with an indication that there is new text to read after scrolling to an earlier
+			  position has been activated.<t>
+			  
+		<t>The presentation area may become too small to present all text in all real-time active bubbles. Various 
+			techniques can be applied to provide a good overview and good reading opportunity even in such situations.
+			The active real-time bubble may have a limited number of lines and if their contents need more lines, 
+			then a scrolling opportunity within the real-time active bubble is provided. Another method can be to only 
+			show the label and the last line of the active real-time bubble contents, and make it possible to expand or 
+			compress the bubble presentation between full view and one line view. </t>	  
+			  
 	
-		  Erasures require special consideration. Erasure within a bubble is straightforward. 
+		 <t> Erasures require special consideration. Erasure within a real-time active bubble is straightforward. 
 		  But if erasure from one participant affects the last character before a bubble, the 
 		  whole previous bubble becomes the actual bubble for real-time action by that participant 
 		  and is placed below all other bubbles in the presentation area. If the border between bubbles 
 		  was caused by the CRLF characters, only one erasure action is required to erase this bubble border. 
 		  When a bubble is closed, it is moved up, above all real-time active bubbles.
-		  
-		  Real-time active text from the local user should be presented in a separate area. When a reason 
-		  to close a bubble from the local user, the bubble is placed above all real-time active bubbles, 
-		  so that the time order that real-time text entries were completed is visible.</t>  
+			 </section>
+			  
+	<section title="Other presentation styles">
+	<t>Other presentation styles than the bubble style may be arranged and appreciated by the users.
+ In a video conference one way may be to have a real-time text area under the video view of each participant. 
+Another view may be to provide one column in a presentation area for each participant and place the text entries
+in a relative vertical position corresponding to when text entry in them was completed. The labels can then be placed 
+in the column header. The considerations for ending and moving and erasure of entered text discussed above for the bubble
+		style are valid also for these styles. 	</t>
+		
+			  </section>
+			  </section>	    
 		  
 	  </section>
 	  <section title="Presentation details for multi-party unaware UAs.">
-	  <t>TBD</t>
+	  <t>Multi-party unaware UA:s are prepared only for presentation of two sources of text, the local user and a remote user. In order to enable some multi-party communication with such UA, the mixer need to plan the presentation and insert labels and line breaks before lables. Many limitations appear for this presentation mode, and it must be seen as a fallback and a last resort. 
+</t>
 <t>	  See Appendix A for an informative example of a procedure for presenting RTT to a conference-unaware UA.</t>
 	  </section>
     </section>
@@ -904,7 +940,7 @@ The display is arranged by this procedure in a text chat style, with a name labe
 	There are some obvious drawbacks, and a terminal designed with multi-party awareness 
 	will be able to present multi-party call contents  in a more flexible way. Only 
 	two parties at a time will be allowed to display added text in real-time, while 
-	the other parties? produced text will need to be stored in the multi-party server
+	the other parties' produced text will need to be stored in the multi-party server
 	for a moment awaiting a suitable occasion to be displayed. There are also some 
 	cases of erasure that will not be performed on the target text but only indicated 
 	in another way. Even with these drawbacks, the procedure provides an opportunity to 
@@ -930,15 +966,16 @@ The display is arranged by this procedure in a text chat style, with a name labe
 <t>By default all participants except the recipient are contributing participants for transmission to the recipient.</t>
 <t>Current participant: 	The participant for whom text currently is transmitted to the recipient in real time.</t>
 <t>Current Recipients:	By default all participants.</t>
-<t>Display Counter:	A counter for the number of displayable characters in a participant?s buffer or in the current entry. Used for controlling how far erasure may be performed.</t>
-<t>Erasure replacement	A character to be displayed when an erasure was done, but the text to erase is not reachable on the multi-party display. Default ?X?.</t> 
+<t>Display Counter:	A counter for the number of displayable characters in a participant's buffer or in the current entry. 
+Used for controlling how far erasure may be performed.</t>
+<t>Erasure replacement	A character to be displayed when an erasure was done, but the text to erase is not reachable on the multi-party display. Default 'X'.</t> 
 <t>Message delimiter:	Character(s) forming the end of an imagined message. A configurable set of alternatives, consisting by default of:  Line Separator, Paragraph Separator, CR, CRLF, LF.</t>
 <t>Pending period:	A configurable time period of inactivity from a participant, by default set to 7 seconds after each reception of characters from that participant, evaluated as current time minus time stamp of latest entered character.</t>
-<t>Sentence delimiter:	Characters forming end of sentence:  A configurable set of alternatives, by default consisting of: dot ?.?, question mark ??? and exclamation mark ?!? followed by a space.</t>
+<t>Sentence delimiter:	Characters forming end of sentence:  A configurable set of alternatives, by default consisting of: dot '.', question mark '?' and exclamation mark '!' followed by a space.</t>
 <t>Label:	A readable unique name for a participant, created by the server from a suitable source related to the participant, e.g. part of the SIP Display name, surrounded by the Label delimiters. The label should have a settable maximum length, with 12 being the default.</t>
 <t>Label delimiters	A configurable set of characters at the edges of the Label, by default being a left bracket [ at the leading edge and a closing bracket ] followed by a space at the trailing edge.</t>
 <t>Line Separator	Unicode UCS-16 2028. Used to request NewLine in Real-Time Text.</t>
-<t>Maximum waiting time:	The maximum time any participant?s text shall be allowed to wait for transmission, by default set to 20 seconds.</t>
+<t>Maximum waiting time:	The maximum time any participant's text shall be allowed to wait for transmission, by default set to 20 seconds.</t>
 <t>Recipient:	The terminal receiving the mixed text stream.</t>
 <t>SGR	Select Graphic Rendition, a control code to specify colours etc.</t>
 <t>Switch Reason: 	A set of reasons to switch Current Participant, consisting of the following</t>
@@ -969,7 +1006,13 @@ The display is arranged by this procedure in a text chat style, with a name labe
 <section title="Structure">
 <t>The real-time text mixer structure described here is supposed to be placed in the 
 	media path so that it is implemented with one mixer per recipient. A mixer 
-	contains buffers for temporary storage of text intended for the recipient. Each mixer has one buffer for each contributing participant. A set of status variables is maintained per buffer and is used in the mixer actions. The mixer logic decides for each moment which participant?s buffer content is to be sent on to the recipient. By default, the recipient does not contribute text to its own mixer. Text transmitted by a participant is usually displayed locally and will only cause confusion if it appears also in received text.</t> 
+	contains buffers for temporary storage of text intended for the recipient. 
+	Each mixer has one buffer for each contributing participant. A set of status 
+	variables is maintained per buffer and is used in the mixer actions. The mixer
+	logic decides for each moment which participant?s buffer content is to be sent 
+	on to the recipient. By default, the recipient does not contribute text to its 
+	own mixer. Text transmitted by a participant is usually displayed locally and will 
+	only cause confusion if it appears also in received text.</t> 
 
 <t>If there is a reason, own text can be configured to be transmitted also to the 
 	participants. That can enable a simplification of the mixer design to have
