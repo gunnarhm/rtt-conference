@@ -1,17 +1,23 @@
-Issues and tasks for progress of draft-hellstrom-multi-party-rtt
+Issues and tasks for progress of draft-hellstrom-mmusic-multi-party-rtt
 
-2019-10-31 Make the T.140 control code method independent of conference-awareness. Just require capability negotiation.
+Was: Issues and tasks for progress of draft-hellstrom-multi-party-rtt - changed and updated on 2019-11-01
+
+2019-10-31 Make the T.140 control code method independent of conference-awareness. Just require capability negotiation. Done but check.
 
 2019-10-31 Align with modern xml2rfc standards.
 
-2019-10-31 Replace ? with proper letters in Appendix A.
+2019-10-31 Replace ? with proper letters in Appendix A.  - Done
 
 2019-10-31 Clean up references.
 
-2019-10-31 Add details on erasure.
+2019-10-31 Add details on erasure. - Done in the conference-aware case.
 
 2019-10-31 From Christer H: In Section 4.3 you say:
 
    "A receiving UA SHOULD separate text from the different sources and identify and display them accordingly."
 
-Doesn't this requirement apply to all mechanisms?
+Doesn't this requirement apply to all mechanisms?    - Yes, elaborate.
+
+2019-11-08 Add details on erasure in the conference-unaware case
+
+2019-11-08 Add history section
