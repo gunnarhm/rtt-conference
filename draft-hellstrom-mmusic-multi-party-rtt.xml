@@ -340,10 +340,10 @@ RFC 3264 specifies in many places that one media description is supposed to desc
 	</t>
 	<t>Pros: 
 		<t>Good security </t>
-		<t>Straightforward multi-party handling.
+		<t>Straightforward multi-party handling.</t>
 	<t>Cons: </t>
 	<t>Does not operate under the usual SIP central conferencing architecture.</t>
-	<t>Requires the participants to perform a lot of key handling 
+			<t>Requires the participants to perform a lot of key handling.</t>
 		
 
 	    
@@ -636,7 +636,8 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
 	
 	<t>Cons:</t>
 	<t> Requires standardization and IANA registration.</t>
-	<t> Is not stream specific. If more than one text stream is specified, all must have the same type of multi-party capability.     
+	<t> Is not stream specific. If more than one text stream 
+		is specified, all must have the same type of multi-party capability.</t>     
 	<t>Cannot be used in the WebRTC environment.</t>
 	</section>
 	     
@@ -739,7 +740,7 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
 	  <t>Can be used also for SDP-controlled WebRTC sessions with multiple streams in the same data channel.</t>
 	  <t>Cons:</t>
 	<t> Requires standardization and IANA registration.</t>
-	<t> May cause interop problems with current RFC4103 implementations not expecting a new fmtp-parameter. 
+	<t> May cause interop problems with current RFC4103 implementations not expecting a new fmtp-parameter. </t>
 	  <t>Cannot guide SIP routing.</t>
 	  </section>
 	
@@ -763,7 +764,7 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
 	<t>The main way to identify the source of text in the RTP based solution is by 
 		the SSRC of the sending participant. It is included in the CSRC list of the transmitted packets.
       Further identification that may be needed for better labeling of received text may be achieved from a number of sources.
-		It may be the RTCP SDES CNAME and NAME reports, and in the conference notification data (RFC 4575).
+		It may be the RTCP SDES CNAME and NAME reports, and in the conference notification data (RFC 4575).</t>
 
 		<t>As soon as a new member is added to the RTP session, its
       characteristics should be transmitted in RTCP SDES CNAME and NAME reports
