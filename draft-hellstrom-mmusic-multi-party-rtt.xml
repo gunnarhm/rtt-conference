@@ -617,7 +617,7 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
 	  </t>
 	  <t>multi-session indicates capability for using separate point-to-point
 	  RTP sessions between all participants.</t>
-	     <t>Example: Contact: &ltsip:A2@beco.example.com></t>
+	     <t>Example: Contact: &lt;sip:a2@beco.example.com></t>
 		     <t>;methods="INVITE,ACK,OPTIONS,BYE,CANCEL"</t>
 		     <t>;+sip.rtt-mixer="multi-session"</t>
 		<t>If, after evaluation of the alternatives in this specification, only one mixing
@@ -676,7 +676,7 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
           answering party shall be used in the session with that UA.</t>
 	  <t>When no common method is declared, then only the fallback method can be used.</t>
 		
-		<t> Example:  a=rtt-mixer:rtp-mixer
+		<t> Example:  a=rtt-mixer:rtp-mixer</t>
 			
 		<t>If, after evaluation of the alternatives in this specification, only one mixing
 			method is selected to be brought to implementation, then the attribute can 
