@@ -344,7 +344,7 @@ RFC 3264 specifies in many places that one media description is supposed to desc
 	<t>Cons: </t>
 	<t>Does not operate under the usual SIP central conferencing architecture.</t>
 			<t>Requires the participants to perform a lot of key handling.</t>
-		
+	      </section>	
 
 	    
      <section title="RTP Mixer indicating participants by a control code in the stream">
