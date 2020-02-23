@@ -617,7 +617,7 @@ implementing parties is: "RTT bridging in WebRTC with one data channel per sourc
 	  </t>
 	  <t>multi-session indicates capability for using separate point-to-point
 	  RTP sessions between all participants.</t>
-	     <t>Example: Contact: <sip:A2@beco.example.com></t>
+	     <t>Example: Contact: &ltsip:A2@beco.example.com></t>
 		     <t>;methods="INVITE,ACK,OPTIONS,BYE,CANCEL"</t>
 		     <t>;+sip.rtt-mixer="multi-session"</t>
 		<t>If, after evaluation of the alternatives in this specification, only one mixing
